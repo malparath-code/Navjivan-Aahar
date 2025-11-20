@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>નવજીવન પશુઆહાર   હિસાબ</title>
-    <!-- Tailwind CSS ને લોડ કરો -->
+    <title>નવજીવન પશુઆહાર - હિસાબ</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* કસ્ટમ CSS */
@@ -51,10 +51,17 @@
                 overflow-y: visible;
             }
         }
-        /* ટ્રાન્ઝેક્શન બોડી માટે મહત્તમ ઊંચાઈ */
+        /* ટ્રાન્ઝેક્શન બોડી માટે મહત્તમ ઊંચાઈ મોબાઇલ પર */
         .transaction-table-body {
             max-height: 400px;
             overflow-y: auto;
+            display: block; /* મોબાઈલ માટે */
+        }
+        /* મોબાઈલ માટે હેડર અને રો ફિક્સ */
+        thead tr, tbody tr {
+             display: table;
+             width: 100%;
+             table-layout: fixed;
         }
     </style>
 </head>
@@ -66,9 +73,43 @@
             </h1>
             <p class="text-center text-sm text-gray-600 mt-1">ઑફલાઇન આવક અને ખર્ચનો હિસાબ (Offline Income & Expense Tracker)</p>
             <p class="text-center text-xs mt-3 p-1 bg-gray-100 rounded-lg text-red-500 font-semibold">
-                નોંધ: આ ડેટા માત્ર તમારા બ્રાઉઝર (Local Storage) માં જ સેવ થાય છે.
+                નોંધ: ડેટા શેર કરવા માટે નીચે આપેલ "ડેટા બેકઅપ" વિકલ્પનો ઉપયોગ કરો.
             </p>
         </header>
+
+        <!-- ડેટા બેકઅપ અને રિસ્ટોર (NEW SECTION for Permanent Save/Share) -->
+        <section class="mb-8 p-6 bg-indigo-50 rounded-xl border border-indigo-200 shadow-md">
+            <h2 class="text-lg font-bold mb-3 text-indigo-900 flex items-center">
+                <span class="text-xl mr-2">💾</span> ડેટા મેનેજમેન્ટ (Share & Save Data)
+            </h2>
+            <p class="text-sm text-gray-600 mb-4">
+                આ ફાઈલ બીજાને મોકલવા માટે પહેલા <b>"ડેટા ડાઉનલોડ"</b> કરો. જો બીજાએ મોકલેલી ફાઈલ તમારે જોવી હોય તો <b>"ડેટા અપલોડ"</b> કરો.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- બેકઅપ બટન -->
+                <div>
+                    <button onclick="exportData()" class="w-full flex justify-center items-center px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        ડેટા ડાઉનલોડ કરો (Backup)
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1 text-center">આ ફાઈલ સાચવી રાખો અથવા શેર કરો.</p>
+                </div>
+
+                <!-- રિસ્ટોર બટન -->
+                <div>
+                    <label for="file-upload" class="w-full flex justify-center items-center px-4 py-3 bg-white border-2 border-indigo-300 border-dashed hover:border-indigo-500 text-indigo-700 font-semibold rounded-lg shadow-sm cursor-pointer transition duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        ડેટા અપલોડ કરો (Restore)
+                    </label>
+                    <input id="file-upload" type="file" accept=".json" class="hidden" onchange="importData(this)">
+                    <p class="text-xs text-gray-500 mt-1 text-center">જૂનો ડેટા આનાથી બદલાઈ જશે.</p>
+                </div>
+            </div>
+        </section>
 
         <!-- ફિલ્ટર કંટ્રોલ્સ -->
         <section class="mb-8 p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow-md">
@@ -112,17 +153,15 @@
         </section>
         
         <!-- માસિક વિશ્લેષણ વિભાગ -->
-        <section class="mb-10 p-6 bg-blue-50 rounded-xl border border-blue-200 shadow-lg">
+        <section class="mb-8 p-6 bg-blue-50 rounded-xl border border-blue-200 shadow-lg">
             <h2 class="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">માસિક પ્રદર્શન વિશ્લેષણ (Monthly Performance Analysis)</h2>
             <div id="monthly-analysis-content" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
                 <!-- આવક વિશ્લેષણ -->
                 <div class="bg-white p-4 rounded-lg shadow-md border border-emerald-300">
                     <h3 class="text-lg font-bold text-emerald-700 mb-2">આવક વિશ્લેષણ (Income Analysis)</h3>
                     <p class="text-sm mb-1 text-gray-700">સૌથી વધુ આવક: <span id="max-income-month" class="font-semibold text-emerald-600">N/A</span> (<span id="max-income-amount" class="font-bold text-emerald-600">₹ 0.00</span>)</p>
                     <p class="text-sm text-gray-700">સૌથી ઓછી આવક: <span id="min-income-month" class="font-semibold text-red-600">N/A</span> (<span id="min-income-amount" class="font-bold text-red-600">₹ 0.00</span>)</p>
                 </div>
-                
                 <!-- ખર્ચ વિશ્લેષણ -->
                 <div class="bg-white p-4 rounded-lg shadow-md border border-red-300">
                     <h3 class="text-lg font-bold text-red-700 mb-2">ખર્ચ વિશ્લેષણ (Expense Analysis)</h3>
@@ -132,10 +171,29 @@
             </div>
         </section>
 
+        <!-- વસ્તુ મુજબ સારાંશ (Item Summary) - NEW SECTION -->
+        <section class="mb-10 p-6 bg-purple-50 rounded-xl border border-purple-200 shadow-lg">
+            <h2 class="text-xl font-semibold mb-4 text-purple-800 border-b pb-2">વસ્તુ મુજબ સારાંશ (Item-wise Stock Summary)</h2>
+            <div class="overflow-x-auto shadow-md rounded-lg border border-gray-200 bg-white">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-purple-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-bold text-purple-900 uppercase tracking-wider">વસ્તુનું નામ</th>
+                            <th class="px-4 py-3 text-right text-xs font-bold text-emerald-700 uppercase tracking-wider">કુલ આવક જથ્થો (Income Qty)</th>
+                            <th class="px-4 py-3 text-right text-xs font-bold text-red-700 uppercase tracking-wider">કુલ ખર્ચ જથ્થો (Expense Qty)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="item-summary-body" class="divide-y divide-gray-100">
+                        <!-- JavaScript થી ડેટા અહીં આવશે -->
+                        <tr><td colspan="3" class="text-center py-4 text-gray-500">માહિતી નથી</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- વ્યવહાર ઉમેરો/એડિટ કરો ફોર્મ -->
         <section class="mb-10 p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-lg">
             <h2 class="text-xl font-semibold mb-4 text-gray-700" id="form-title">નવો વ્યવહાર ઉમેરો (Add New Transaction)</h2>
-            <!-- form માં autofocus ઉમેર્યો છે અને enter કી હેન્ડલ કરવા માટે logic ઉમેરાયો છે -->
             <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
                 
                 <!-- તારીખ -->
@@ -156,7 +214,7 @@
                         <option value="પાપડી">પાપડી (Papadi)</option>
                         <option value="જવ ભરડો">જવ ભરડો (Jav Bhardo)</option>
                         <option value="સોયાબીન">સોયાબીન (Soyabean)</option>
-			 <option value="તુવેરચુની ">તુવેરચુની (Tuverchuni)</option>
+                        <option value="તુવેરચુની">તુવેરચુની (Tuverchuni)</option>
                         <option value="પશુ આહાર">પશુ આહાર (Pashu Aahar)</option>
                         <option value="લાલી">લાલી (Lali)</option>
                         <option value="દાણ">દાણ (Daan)</option>
@@ -183,7 +241,7 @@
                     <label for="total-amount-display" class="block text-sm font-medium text-gray-700 mb-1">કુલ રકમ (Total)</label>
                     <input type="text" id="total-amount-display" value="₹ 0.00" readonly 
                            class="w-full large-input border rounded-lg bg-gray-200 font-bold text-gray-700">
-                    <input type="hidden" id="amount-hidden" name="amount"> <!-- ગણતરી કરેલ રકમ સાચવવા માટેનું છુપાયેલું ક્ષેત્ર -->
+                    <input type="hidden" id="amount-hidden" name="amount">
                 </div>
                 
                 <!-- સ્ત્રોત/ગંતવ્ય (Source/Destination) -->
@@ -210,7 +268,6 @@
                                    transition duration-150 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105">
                         ઉમેરો (Add)
                     </button>
-                    <!-- એડિટ રદ્દ કરો બટન -->
                     <button type="button" id="cancel-edit-button"
                             class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-xl 
                                    transition duration-150 ease-in-out shadow-lg transform hover:scale-105 mt-2 hidden">
@@ -233,8 +290,8 @@
                         <thead class="bg-emerald-50">
                             <tr>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">તારીખ</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">ખોનનો પ્રકાર</th>
-                                <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કુલ રકમ (₹)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">વિગત</th>
+                                <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કુલ રકમ</th>
                                 <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કાર્યવાહી</th>
                             </tr>
                         </thead>
@@ -254,8 +311,8 @@
                         <thead class="bg-red-50">
                             <tr>
                                 <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">તારીખ</th>
-                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">ક્યાંથી/કોને?</th>
-                                <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કુલ રકમ (₹)</th>
+                                <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-2/5">વિગત</th>
+                                <th class="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કુલ રકમ</th>
                                 <th class="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider w-1/5">કાર્યવાહી</th>
                             </tr>
                         </thead>
@@ -319,18 +376,14 @@
         const minExpenseMonthEl = document.getElementById('min-expense-month');
         const minExpenseAmountEl = document.getElementById('min-expense-amount');
         
-        /**
-         * રેન્ડમ ID જનરેટ કરવા માટેનું યુટિલિટી ફંક્શન
-         */
+        const itemSummaryBody = document.getElementById('item-summary-body');
+
+        // --- યુટિલિટી ફંક્શન્સ ---
+
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substring(2);
         }
 
-        /**
-         * સ્ટેટસ મેસેજીસ દર્શાવવા માટેનું યુટિલિટી ફંક્શન.
-         * @param {string} message - મેસેજ સામગ્રી.
-         * @param {string} type - 'error' અથવા 'success'.
-         */
         function showStatus(message, type = 'success') {
             errorMessageEl.classList.add('hidden');
             successMessageEl.classList.add('hidden');
@@ -344,28 +397,23 @@
             }, 3000);
         }
 
-        /**
-         * સ્ત્રોત/ગંતવ્ય ક્ષેત્રની દૃશ્યતા અને જરૂરી સ્થિતિને ટોગલ કરે છે.
-         */
         function toggleSourceDestinationVisibility() {
             const isExpense = typeInput.value === 'expense';
             
             if (isExpense) {
                 sourceDestinationGroup.classList.remove('hidden');
                 sourceDestinationInput.required = true;
+                sourceDestinationInput.placeholder = "કોને ચૂકવ્યા?";
             } else {
                 sourceDestinationGroup.classList.add('hidden');
                 sourceDestinationInput.required = false;
-                // આવક પસંદ કરવામાં આવે ત્યારે સ્ત્રોત/ગંતવ્ય સાફ કરો
+                // આવક માટે રીસેટ
                 if (editingTransactionId === null) { 
                     sourceDestinationInput.value = ''; 
                 }
             }
         }
 
-        /**
-         * પસંદ કરેલ ફિલ્ટર પ્રકારના આધારે ફિલ્ટર તારીખ ઇનપુટને સમાયોજિત કરે છે.
-         */
         function updateFilterDateInput() {
             const filterType = filterTypeInput.value;
             
@@ -383,7 +431,7 @@
                 }
                 filterDateLabel.textContent = 'મહિનો પસંદ કરો (Select Month)';
             } else if (filterType === 'yearly') {
-                filterDateInput.type = 'number'; // વર્ષ માટે નંબરનો ઉપયોગ
+                filterDateInput.type = 'number'; // વર્ષ માટે નંબર
                 filterDateInput.min = 2000;
                 filterDateInput.max = 2099;
                 if (!filterDateInput.value) {
@@ -392,195 +440,25 @@
                 filterDateLabel.textContent = 'વર્ષ પસંદ કરો (Select Year)';
             }
             
-            // ઇનપુટ બદલાય ત્યારે ફિલ્ટર્સ ફરીથી લાગુ કરો
             applyFiltersAndRender();
         }
 
-        /**
-         * ફોર્મ અને એડિટિંગ સ્ટેટને રીસેટ કરે છે.
-         */
         function resetFormState() {
             form.reset();
             dateInput.value = new Date().toISOString().substring(0, 10);
             calculateTotalAmount();
             editingTransactionId = null;
             
-            // નવા વ્યવહાર માટે UI રીસેટ કરો
             submitButton.textContent = 'ઉમેરો (Add)';
             submitButton.classList.remove('bg-blue-600', 'hover:bg-blue-700');
             submitButton.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
             cancelButton.classList.add('hidden');
             formTitle.textContent = 'નવો વ્યવહાર ઉમેરો (Add New Transaction)';
 
-            toggleSourceDestinationVisibility(); // દૃશ્યતા ફરીથી તપાસો
-            dateInput.focus(); // ઝડપી એન્ટ્રી માટે ફોકસ પાછું આપો
-        }
-
-        /**
-         * એડિટિંગ સક્ષમ કરવા માટે ફોર્મમાં વ્યવહાર ડેટા ભરે છે.
-         * @param {object} transaction - એડિટ કરવા માટેનો વ્યવહાર ઓબ્જેક્ટ.
-         */
-        function editTransaction(transaction) {
-            editingTransactionId = transaction.id;
-
-            dateInput.value = transaction.date;
-            itemTypeInput.value = transaction.itemType;
-            quantityInput.value = transaction.quantity;
-            rateInput.value = transaction.rate;
-            typeInput.value = transaction.type;
-            
-            sourceDestinationInput.value = transaction.sourceDestination || ''; 
-            
-            calculateTotalAmount(); // ભરેલા મૂલ્યોના આધારે કુલની ગણતરી કરો
-            toggleSourceDestinationVisibility(); // નવા પ્રકારના આધારે દૃશ્યતા ટોગલ કરો
-
-            // એડિટિંગ સ્ટેટ માટે UI અપડેટ કરો
-            submitButton.textContent = 'અપડેટ કરો (Update)';
-            submitButton.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-            submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
-            cancelButton.classList.remove('hidden');
-            formTitle.textContent = `વ્યવહાર એડિટ કરો (Edit Transaction: ${transaction.id.substring(0, 4)}...)`;
-
-            // ફોર્મ પર સ્ક્રોલ કરો અને ફોકસ આપો
-            form.scrollIntoView({ behavior: 'smooth' });
+            toggleSourceDestinationVisibility();
             dateInput.focus();
         }
 
-
-        /**
-         * LocalStorage માંથી વ્યવહારો લોડ કરે છે.
-         */
-        function loadTransactions() {
-            try {
-                const data = localStorage.getItem(STORAGE_KEY);
-                allTransactionsData = data ? JSON.parse(data) : [];
-                // ખાતરી કરો કે amount ફ્લોટ છે
-                allTransactionsData = allTransactionsData.map(t => ({
-                    ...t,
-                    amount: parseFloat(t.amount)
-                }));
-                console.log("Transactions loaded from LocalStorage:", allTransactionsData.length);
-            } catch (error) {
-                console.error("Error loading transactions from localStorage:", error);
-                showStatus("ડેટા લોડ કરવામાં ભૂલ આવી.", 'error');
-                allTransactionsData = [];
-            }
-            // ડેટા લોડ થયા પછી ફિલ્ટર્સ લાગુ કરો અને રેન્ડર કરો
-            applyFiltersAndRender();
-        }
-
-        /**
-         * વ્યવહારોને LocalStorage માં સાચવે છે.
-         */
-        function saveTransactions() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(allTransactionsData));
-            } catch (error) {
-                console.error("Error saving transactions to localStorage:", error);
-                showStatus("ડેટા સેવ કરવામાં ભૂલ આવી. સ્ટોરેજ ભરેલો હોઈ શકે.", 'error');
-            }
-        }
-
-        /**
-         * કુલ રકમની ગણતરી કરે છે (જથ્થો * દર) અને ડિસ્પ્લે/છુપાયેલ ક્ષેત્રને અપડેટ કરે છે.
-         */
-        function calculateTotalAmount() {
-            const quantity = parseFloat(quantityInput.value) || 0;
-            const rate = parseFloat(rateInput.value) || 0;
-            
-            const totalAmount = (quantity * rate).toFixed(2); 
-
-            totalAmountDisplay.value = formatCurrency(totalAmount);
-            amountHiddenInput.value = totalAmount; // ગણતરી કરેલ રકમ સ્ટોર કરો
-        }
-
-        /**
-         * નવા વ્યવહારને સાચવવા અથવા હાલના વ્યવહારને અપડેટ કરવા માટે ફોર્મ સબમિશનને હેન્ડલ કરે છે.
-         * @param {Event} e - ફોર્મ સબમિશન ઇવેન્ટ.
-         */
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            errorMessageEl.classList.add('hidden');
-            successMessageEl.classList.add('hidden');
-
-            calculateTotalAmount(); 
-
-            // --- ક્ષેત્રો પુનઃપ્રાપ્તિ ---
-            const date = dateInput.value;
-            const itemType = itemTypeInput.value ? itemTypeInput.value.trim() : '';
-            const quantity = parseInt(quantityInput.value);
-            const rate = parseFloat(rateInput.value);
-            const totalAmount = parseFloat(amountHiddenInput.value);
-            const type = typeInput.value;
-            
-            let sourceDestination = '';
-            if (type === 'expense') {
-                sourceDestination = sourceDestinationInput.value ? sourceDestinationInput.value.trim() : '';
-                if (!sourceDestination) {
-                    showStatus("ખર્ચ માટે 'ક્યાંથી/કોને?' (Source/Destination) ભરવું ફરજિયાત છે.", 'error');
-                    return;
-                }
-            } else {
-                sourceDestination = ''; 
-            }
-            
-            // મૂળભૂત માન્યતા
-            if (!date || !itemType || isNaN(quantity) || quantity <= 0 || isNaN(rate) || rate < 0 || isNaN(totalAmount) || totalAmount < 0) {
-                showStatus("કૃપા કરીને બધી વિગતો યોગ્ય રીતે ભરો.", 'error');
-                return;
-            }
-
-            const transactionData = {
-                date: date,
-                itemType: itemType,
-                quantity: quantity,
-                rate: rate,
-                amount: totalAmount, // ફ્લોટ તરીકે સ્ટોર કરો
-                type: type,
-                sourceDestination: sourceDestination,
-            };
-
-            if (editingTransactionId) {
-                // હાલના વ્યવહારને અપડેટ કરો
-                const index = allTransactionsData.findIndex(t => t.id === editingTransactionId);
-                if (index !== -1) {
-                    allTransactionsData[index] = { ...allTransactionsData[index], ...transactionData };
-                    showStatus("વ્યવહાર સફળતાપૂર્વક અપડેટ થયો. (Transaction updated successfully.)");
-                }
-            } else {
-                // નવો વ્યવહાર ઉમેરો
-                transactionData.id = generateId();
-                transactionData.timestamp = Date.now();
-                allTransactionsData.push(transactionData);
-                showStatus("નવો વ્યવહાર સફળતાપૂર્વક ઉમેરાયો. (New transaction added successfully.)");
-            }
-            
-            saveTransactions(); // LocalStorage માં સેવ કરો
-            resetFormState(); // ફોર્મ અને સ્ટેટ સાફ કરો
-            applyFiltersAndRender(); // UI અપડેટ કરો
-        }
-
-        /**
-         * વ્યવહાર કાઢી નાખે છે.
-         * @param {string} docId - વ્યવહાર ID.
-         */
-        function deleteTransaction(docId) {
-            allTransactionsData = allTransactionsData.filter(t => t.id !== docId);
-            saveTransactions();
-            applyFiltersAndRender();
-            showStatus("વ્યવહાર સફળતાપૂર્વક કાઢી નાખવામાં આવ્યો. (Transaction deleted successfully.)");
-            
-            // જો કાઢી નાખેલ વ્યવહાર એડિટિંગમાં હોય, તો ફોર્મને રીસેટ કરો
-            if (editingTransactionId === docId) {
-                resetFormState();
-            }
-        }
-
-        /**
-         * નંબરને ભારતીય રૂપિયા (INR) ફોર્મેટમાં ફોર્મેટ કરે છે.
-         * @param {number|string} amount - ફોર્મેટ કરવા માટેની રકમ.
-         * @returns {string} ફોર્મેટ કરેલ ચલણ સ્ટ્રિંગ.
-         */
         function formatCurrency(amount) {
             const numAmount = typeof amount === 'number' ? amount : parseFloat(amount);
             if (isNaN(numAmount)) return '₹ 0.00';
@@ -592,15 +470,10 @@
             }).format(numAmount);
         }
         
-        /**
-         * YYYY-MM સ્ટ્રિંગને ગુજરાતી મહિનાના નામ + વર્ષમાં રૂપાંતરિત કરે છે.
-         * @param {string} ymString - YYYY-MM સ્ટ્રિંગ.
-         * @returns {string} ગુજરાતીમાં ફોર્મેટ કરેલ મહિનો અને વર્ષ સ્ટ્રિંગ.
-         */
         function formatMonthYear(ymString) {
             if (!ymString || ymString.length !== 7 || ymString.indexOf('-') !== 4) return ymString;
             const [year, monthIndexStr] = ymString.split('-');
-            const monthIndex = parseInt(monthIndexStr, 10) - 1; // 0-ઇન્ડેક્સ
+            const monthIndex = parseInt(monthIndexStr, 10) - 1; 
             
             if (monthIndex >= 0 && monthIndex < 12) {
                 return `${GUJARATI_MONTHS[monthIndex]} ${year}`;
@@ -608,17 +481,209 @@
             return ymString;
         }
 
-        /**
-         * સારાંશ વિભાગને અપડેટ કરે છે (આવક, ખર્ચ, બેલેન્સ).
-         * @param {Array<object>} transactions - હાલમાં ફિલ્ટર કરેલા વ્યવહારોની સૂચિ.
-         */
+        function calculateTotalAmount() {
+            const quantity = parseFloat(quantityInput.value) || 0;
+            const rate = parseFloat(rateInput.value) || 0;
+            
+            const totalAmount = (quantity * rate).toFixed(2); 
+
+            totalAmountDisplay.value = formatCurrency(totalAmount);
+            amountHiddenInput.value = totalAmount;
+        }
+
+        // --- ડેટા લોજીક ---
+
+        function loadTransactions() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                allTransactionsData = data ? JSON.parse(data) : [];
+                allTransactionsData = allTransactionsData.map(t => ({
+                    ...t,
+                    amount: parseFloat(t.amount),
+                    quantity: parseInt(t.quantity) || 0
+                }));
+                console.log("Transactions loaded:", allTransactionsData.length);
+            } catch (error) {
+                console.error("Error loading transactions:", error);
+                showStatus("ડેટા લોડ કરવામાં ભૂલ આવી.", 'error');
+                allTransactionsData = [];
+            }
+            applyFiltersAndRender();
+        }
+
+        function saveTransactions() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(allTransactionsData));
+            } catch (error) {
+                console.error("Error saving transactions:", error);
+                showStatus("ડેટા સેવ કરવામાં ભૂલ આવી.", 'error');
+            }
+        }
+
+        // --- બેકઅપ અને રિસ્ટોર (Backup & Restore Functions) ---
+
+        function exportData() {
+            if (allTransactionsData.length === 0) {
+                showStatus("કોઈ ડેટા ઉપલબ્ધ નથી બેકઅપ લેવા માટે.", 'error');
+                return;
+            }
+
+            const dataStr = JSON.stringify(allTransactionsData, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            
+            const now = new Date();
+            const dateStr = `${now.getDate()}-${now.getMonth()+1}-${now.getFullYear()}`;
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Navjivan_Backup_${dateStr}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus("બેકઅપ ફાઈલ ડાઉનલોડ થઈ ગઈ છે.");
+        }
+
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    const parsedData = JSON.parse(content);
+                    
+                    if (Array.isArray(parsedData)) {
+                        if (confirm(`આ ફાઈલમાં ${parsedData.length} એન્ટ્રી છે. શું તમે હાલનો ડેટા બદલીને આ નવો ડેટા લાવવા માંગો છો?`)) {
+                            allTransactionsData = parsedData;
+                            saveTransactions();
+                            applyFiltersAndRender();
+                            showStatus("ડેટા સફળતાપૂર્વક રિસ્ટોર થયો!");
+                        }
+                    } else {
+                        showStatus("ફાઈલ ફોર્મેટ અયોગ્ય છે.", 'error');
+                    }
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                    showStatus("ફાઈલ વાંચવામાં ભૂલ આવી.", 'error');
+                }
+                // Reset input so same file can be selected again if needed
+                input.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        // --- ફોર્મ હેન્ડલિંગ ---
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            errorMessageEl.classList.add('hidden');
+            successMessageEl.classList.add('hidden');
+
+            calculateTotalAmount(); 
+
+            const date = dateInput.value;
+            const itemType = itemTypeInput.value ? itemTypeInput.value.trim() : '';
+            const quantity = parseInt(quantityInput.value);
+            const rate = parseFloat(rateInput.value);
+            const totalAmount = parseFloat(amountHiddenInput.value);
+            const type = typeInput.value;
+            
+            let sourceDestination = '';
+            if (type === 'expense') {
+                sourceDestination = sourceDestinationInput.value ? sourceDestinationInput.value.trim() : '';
+                if (!sourceDestination) {
+                    showStatus("ખર્ચ માટે 'ક્યાંથી/કોને?' ભરવું ફરજિયાત છે.", 'error');
+                    return;
+                }
+            } else {
+                sourceDestination = ''; 
+            }
+            
+            if (!date || !itemType || isNaN(quantity) || quantity <= 0 || isNaN(rate) || rate < 0 || isNaN(totalAmount)) {
+                showStatus("કૃપા કરીને બધી વિગતો યોગ્ય રીતે ભરો.", 'error');
+                return;
+            }
+
+            const transactionData = {
+                date: date,
+                itemType: itemType,
+                quantity: quantity,
+                rate: rate,
+                amount: totalAmount,
+                type: type,
+                sourceDestination: sourceDestination,
+            };
+
+            if (editingTransactionId) {
+                const index = allTransactionsData.findIndex(t => t.id === editingTransactionId);
+                if (index !== -1) {
+                    allTransactionsData[index] = { ...allTransactionsData[index], ...transactionData };
+                    showStatus("વ્યવહાર અપડેટ થયો.");
+                }
+            } else {
+                transactionData.id = generateId();
+                transactionData.timestamp = Date.now();
+                allTransactionsData.push(transactionData);
+                showStatus("નવો વ્યવહાર ઉમેરાયો.");
+            }
+            
+            saveTransactions();
+            resetFormState();
+            applyFiltersAndRender();
+        }
+
+        function editTransactionHandler(id) {
+            const transaction = allTransactionsData.find(t => t.id === id);
+            if (!transaction) return;
+
+            editingTransactionId = transaction.id;
+
+            dateInput.value = transaction.date;
+            itemTypeInput.value = transaction.itemType;
+            quantityInput.value = transaction.quantity;
+            rateInput.value = transaction.rate;
+            typeInput.value = transaction.type;
+            
+            toggleSourceDestinationVisibility(); // પ્રકાર બદલાયો હોઈ શકે
+            sourceDestinationInput.value = transaction.sourceDestination || ''; 
+            
+            calculateTotalAmount(); 
+
+            submitButton.textContent = 'અપડેટ કરો (Update)';
+            submitButton.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+            submitButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            cancelButton.classList.remove('hidden');
+            formTitle.textContent = `વ્યવહાર એડિટ કરો`;
+
+            form.scrollIntoView({ behavior: 'smooth' });
+            dateInput.focus();
+        }
+
+        function deleteTransactionHandler(id) {
+            if (confirm("શું તમે ખરેખર આ વ્યવહાર કાઢી નાખવા માંગો છો?")) {
+                allTransactionsData = allTransactionsData.filter(t => t.id !== id);
+                saveTransactions();
+                applyFiltersAndRender();
+                showStatus("વ્યવહાર કાઢી નાખવામાં આવ્યો.");
+                
+                if (editingTransactionId === id) {
+                    resetFormState();
+                }
+            }
+        }
+
+        // --- રેન્ડરીંગ અને એનાલિસિસ ---
+
         function updateSummary(transactions) {
             let totalIncome = 0;
             let totalExpense = 0;
 
             transactions.forEach(t => {
                 const amount = t.amount;
-                
                 if (!isNaN(amount)) {
                     if (t.type === 'income') {
                         totalIncome += amount;
@@ -634,290 +699,216 @@
             totalExpenseEl.textContent = formatCurrency(totalExpense);
             netBalanceEl.textContent = formatCurrency(netBalance);
             
-            const netBalanceParent = netBalanceEl.parentElement;
-            
-            // ક્લાસ રીસેટ કરો
-            netBalanceParent.classList.remove('bg-red-100', 'bg-blue-100');
-            netBalanceEl.classList.remove('text-red-600', 'text-blue-600');
-
-            // નવા ક્લાસ લાગુ કરો
             if (netBalance >= 0) {
-                netBalanceParent.classList.add('bg-blue-100');
+                netBalanceEl.classList.remove('text-red-600');
                 netBalanceEl.classList.add('text-blue-600');
             } else {
-                netBalanceParent.classList.add('bg-red-100');
+                netBalanceEl.classList.remove('text-blue-600');
                 netBalanceEl.classList.add('text-red-600');
             }
         }
-        
-        /**
-         * ન્યૂનતમ/મહત્તમ આવક અને ખર્ચ સાથેનો મહિનો શોધવા માટે વિશ્લેષણ કરે છે.
-         * @param {Array<object>} transactions - બધા વ્યવહારોની સંપૂર્ણ સૂચિ.
-         */
-        function performMonthlyAnalysis(transactions) {
-            const monthlyData = {}; // સ્ટોર કરે છે { 'YYYY-MM': { income: 0, expense: 0 } }
-            
-            transactions.forEach(t => {
-                const monthKey = t.date.substring(0, 7); 
-                const amount = t.amount;
-                
-                if (!monthlyData[monthKey]) {
-                    monthlyData[monthKey] = { income: 0, expense: 0 };
-                }
-                
-                if (t.type === 'income') {
-                    monthlyData[monthKey].income += amount;
-                } else if (t.type === 'expense') {
-                    monthlyData[monthKey].expense += amount;
-                }
-            });
 
-            const months = Object.keys(monthlyData);
-            if (months.length === 0) {
-                // જો કોઈ વ્યવહાર ન હોય તો N/A પર રીસેટ કરો
-                const defaultText = 'N/A';
-                const defaultAmount = '₹ 0.00';
-                
-                maxIncomeMonthEl.textContent = defaultText;
-                maxIncomeAmountEl.textContent = defaultAmount;
-                minIncomeMonthEl.textContent = defaultText;
-                minIncomeAmountEl.textContent = defaultAmount;
-                maxExpenseMonthEl.textContent = defaultText;
-                maxExpenseAmountEl.textContent = defaultAmount;
-                minExpenseMonthEl.textContent = defaultText;
-                minExpenseAmountEl.textContent = defaultAmount;
+        function calculateMonthlyAnalysis(transactions) {
+            if (transactions.length === 0) {
+                [maxIncomeMonthEl, maxIncomeAmountEl, minIncomeMonthEl, minIncomeAmountEl, 
+                 maxExpenseMonthEl, maxExpenseAmountEl, minExpenseMonthEl, minExpenseAmountEl].forEach(el => {
+                     el.textContent = el.id.includes('amount') ? '₹ 0.00' : 'N/A';
+                 });
                 return;
             }
 
+            const monthlyData = {};
 
-            let maxIncome = { month: '', amount: -Infinity };
-            let minIncome = { month: '', amount: Infinity };
-            let maxExpense = { month: '', amount: -Infinity };
-            let minExpense = { month: '', amount: Infinity };
-
-            months.forEach(monthKey => {
-                const data = monthlyData[monthKey];
-
-                // આવક વિશ્લેષણ
-                if (data.income > maxIncome.amount) {
-                    maxIncome = { month: monthKey, amount: data.income };
+            transactions.forEach(t => {
+                const monthKey = t.date.substring(0, 7); // YYYY-MM
+                if (!monthlyData[monthKey]) {
+                    monthlyData[monthKey] = { income: 0, expense: 0 };
                 }
-                if (data.income < minIncome.amount) {
-                     minIncome = { month: monthKey, amount: data.income };
+                if (t.type === 'income') monthlyData[monthKey].income += t.amount;
+                if (t.type === 'expense') monthlyData[monthKey].expense += t.amount;
+            });
+
+            const months = Object.keys(monthlyData);
+            if (months.length === 0) return;
+
+            let maxInc = -1, minInc = Infinity, maxIncMonth = 'N/A', minIncMonth = 'N/A';
+            let maxExp = -1, minExp = Infinity, maxExpMonth = 'N/A', minExpMonth = 'N/A';
+
+            months.forEach(m => {
+                const d = monthlyData[m];
+                if (d.income > maxInc) { maxInc = d.income; maxIncMonth = m; }
+                if (d.income > 0 && d.income < minInc) { minInc = d.income; minIncMonth = m; }
+                if (d.expense > maxExp) { maxExp = d.expense; maxExpMonth = m; }
+                if (d.expense > 0 && d.expense < minExp) { minExp = d.expense; minExpMonth = m; }
+            });
+
+            if (minInc === Infinity) minInc = 0;
+            if (minExp === Infinity) minExp = 0;
+
+            maxIncomeMonthEl.textContent = formatMonthYear(maxIncMonth);
+            maxIncomeAmountEl.textContent = formatCurrency(maxInc > -1 ? maxInc : 0);
+            minIncomeMonthEl.textContent = formatMonthYear(minIncMonth);
+            minIncomeAmountEl.textContent = formatCurrency(minInc);
+
+            maxExpenseMonthEl.textContent = formatMonthYear(maxExpMonth);
+            maxExpenseAmountEl.textContent = formatCurrency(maxExp > -1 ? maxExp : 0);
+            minExpenseMonthEl.textContent = formatMonthYear(minExpMonth);
+            minExpenseAmountEl.textContent = formatCurrency(minExp);
+        }
+
+        // --- નવી ફંક્શન: વસ્તુ મુજબ સારાંશ (Item Summary) ---
+        function updateItemSummary(transactions) {
+            const summary = {};
+
+            // ડેટા એકત્રિત કરો
+            transactions.forEach(t => {
+                const item = t.itemType;
+                const qty = parseInt(t.quantity) || 0;
+
+                if (!summary[item]) {
+                    summary[item] = { incomeQty: 0, expenseQty: 0 };
                 }
 
-                // ખર્ચ વિશ્લેષણ
-                if (data.expense > maxExpense.amount) {
-                    maxExpense = { month: monthKey, amount: data.expense };
-                }
-                if (data.expense < minExpense.amount) {
-                    minExpense = { month: monthKey, amount: data.expense };
+                if (t.type === 'income') {
+                    summary[item].incomeQty += qty;
+                } else if (t.type === 'expense') {
+                    summary[item].expenseQty += qty;
                 }
             });
-            
-            // જો કોઈ ન્યૂનતમ મૂલ્ય ન મળે (કારણ કે બધા વ્યવહારો શૂન્ય છે અથવા માત્ર એક મહિનો છે), તો પ્રથમ મહિનાનો ઉપયોગ કરો.
-             if (minIncome.amount === Infinity && months.length > 0) {
-                 minIncome = { month: months[0], amount: monthlyData[months[0]].income };
-            }
-            if (minExpense.amount === Infinity && months.length > 0) {
-                 minExpense = { month: months[0], amount: monthlyData[months[0]].expense };
+
+            // UI અપડેટ કરો
+            itemSummaryBody.innerHTML = '';
+            const items = Object.keys(summary);
+
+            if (items.length === 0) {
+                itemSummaryBody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-gray-500">કોઈ ડેટા ઉપલબ્ધ નથી</td></tr>`;
+                return;
             }
 
-            // HTML વિશ્લેષણ વિભાગ અપડેટ કરો
-            maxIncomeMonthEl.textContent = formatMonthYear(maxIncome.month);
-            maxIncomeAmountEl.textContent = formatCurrency(maxIncome.amount);
-            
-            minIncomeMonthEl.textContent = formatMonthYear(minIncome.month);
-            minIncomeAmountEl.textContent = formatCurrency(minIncome.amount);
-            
-            maxExpenseMonthEl.textContent = formatMonthYear(maxExpense.month);
-            maxExpenseAmountEl.textContent = formatCurrency(maxExpense.amount);
-            
-            minExpenseMonthEl.textContent = formatMonthYear(minExpense.month);
-            minExpenseAmountEl.textContent = formatCurrency(minExpense.amount);
+            // સોર્ટ કરો (વસ્તુના નામ પ્રમાણે)
+            items.sort();
+
+            items.forEach(item => {
+                const data = summary[item];
+                // માત્ર જો કોઈ જથ્થો હોય તો જ બતાવો (optional)
+                if (data.incomeQty > 0 || data.expenseQty > 0) {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td class="px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50">${item}</td>
+                        <td class="px-4 py-3 text-sm font-bold text-right text-emerald-600">${data.incomeQty} બોરી</td>
+                        <td class="px-4 py-3 text-sm font-bold text-right text-red-600">${data.expenseQty} બોરી</td>
+                    `;
+                    itemSummaryBody.appendChild(row);
+                }
+            });
         }
 
-        /**
-         * બધા વ્યવહારોની સૂચિમાં તારીખ ફિલ્ટર લાગુ કરે છે અને પછી રેન્ડર કરે છે.
-         */
-        function applyFiltersAndRender() {
-            const filterType = filterTypeInput.value;
-            const filterDate = filterDateInput.value;
-            
-            let filteredTransactions = allTransactionsData;
-
-            if (filterType === 'monthly' && filterDate) {
-                // filterDate એ 'YYYY-MM' છે
-                filteredTransactions = allTransactionsData.filter(t => t.date.startsWith(filterDate));
-            } else if (filterType === 'yearly' && filterDate) {
-                // filterDate એ 'YYYY' છે
-                filteredTransactions = allTransactionsData.filter(t => t.date.startsWith(filterDate));
-            } else if (filterType === 'all') {
-                // કોઈ ફિલ્ટર લાગુ નથી
-                filteredTransactions = allTransactionsData;
-            }
-
-            // 1. સારાંશ અપડેટ કરો (ફિલ્ટર કરેલા ડેટા પર)
-            updateSummary(filteredTransactions);
-            
-            // 2. યાદીઓ રેન્ડર કરો (ફિલ્ટર કરેલા ડેટા પર)
-            renderTransactions(filteredTransactions);
-            
-            // 3. માસિક વિશ્લેષણ અપડેટ કરો (બધા ડેટા પર, ફિલ્ટર નહીં)
-            performMonthlyAnalysis(allTransactionsData);
-        }
-
-        /**
-         * ફિલ્ટર કરેલી આવક અને ખર્ચની યાદીઓ રેન્ડર કરે છે.
-         * @param {Array<object>} filteredTransactions - તારીખ દ્વારા ફિલ્ટર કરાયેલા વ્યવહારો.
-         */
-        function renderTransactions(filteredTransactions) {
-            
-            // અલગ યાદીઓ
-            const incomeTransactions = filteredTransactions.filter(t => t.type === 'income');
-            const expenseTransactions = filteredTransactions.filter(t => t.type === 'expense');
-
-            // તારીખ દ્વારા વ્યવહારોને સૉર્ટ કરો (નવીનતમ પ્રથમ)
-            const sortFn = (a, b) => {
-                const dateA = new Date(a.date);
-                const dateB = new Date(b.date);
-                if (dateA > dateB) return -1;
-                if (dateA < dateB) return 1;
-                return b.timestamp - a.timestamp; // જો તારીખ સમાન હોય તો ટાઇમસ્ટેમ્પ દ્વારા સૉર્ટ કરો
-            };
-            
-            incomeTransactions.sort(sortFn);
-            expenseTransactions.sort(sortFn);
-
-
-            // --- આવક યાદી રેન્ડર કરો ---
+        function renderTransactionLists(incomeTx, expenseTx) {
+            // Income Table
             incomeListBody.innerHTML = '';
-            if (incomeTransactions.length === 0) {
+            if (incomeTx.length === 0) {
                 noIncomeEl.classList.remove('hidden');
+                incomeListBody.parentElement.classList.add('hidden'); 
             } else {
                 noIncomeEl.classList.add('hidden');
-                incomeTransactions.forEach(t => {
-                    incomeListBody.appendChild(createTransactionRow(t, 'income'));
+                incomeListBody.parentElement.classList.remove('hidden');
+                
+                incomeTx.forEach(t => {
+                    const row = document.createElement('tr');
+                    const formattedDate = t.date.split('-').reverse().join('-'); 
+                    
+                    row.innerHTML = `
+                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">${formattedDate}</td>
+                        <td class="px-3 py-3 text-sm text-gray-600">
+                            <div class="font-semibold">${t.itemType}</div>
+                            <div class="text-xs text-gray-500">${t.quantity} બોરી x ${t.rate}</div>
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm text-emerald-600 font-bold text-right">${formatCurrency(t.amount)}</td>
+                        <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium">
+                            <button onclick="editTransactionHandler('${t.id}')" class="text-blue-600 hover:text-blue-900 mx-1 p-1 rounded hover:bg-blue-50">✏️</button>
+                            <button onclick="deleteTransactionHandler('${t.id}')" class="text-red-600 hover:text-red-900 mx-1 p-1 rounded hover:bg-red-50">🗑️</button>
+                        </td>
+                    `;
+                    incomeListBody.appendChild(row);
                 });
             }
 
-            // --- ખર્ચ યાદી રેન્ડર કરો ---
+            // Expense Table
             expenseListBody.innerHTML = '';
-            if (expenseTransactions.length === 0) {
+            if (expenseTx.length === 0) {
                 noExpenseEl.classList.remove('hidden');
+                expenseListBody.parentElement.classList.add('hidden');
             } else {
                 noExpenseEl.classList.add('hidden');
-                expenseTransactions.forEach(t => {
-                    expenseListBody.appendChild(createTransactionRow(t, 'expense'));
+                expenseListBody.parentElement.classList.remove('hidden');
+
+                expenseTx.forEach(t => {
+                    const row = document.createElement('tr');
+                    const formattedDate = t.date.split('-').reverse().join('-');
+
+                    row.innerHTML = `
+                        <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">${formattedDate}</td>
+                        <td class="px-3 py-3 text-sm text-gray-600">
+                            <div class="font-semibold">${t.itemType}</div>
+                            <div class="text-xs text-gray-500 text-red-500">To: ${t.sourceDestination}</div>
+                            <div class="text-xs text-gray-400">${t.quantity} બોરી x ${t.rate}</div>
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-sm text-red-600 font-bold text-right">${formatCurrency(t.amount)}</td>
+                        <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium">
+                            <button onclick="editTransactionHandler('${t.id}')" class="text-blue-600 hover:text-blue-900 mx-1 p-1 rounded hover:bg-blue-50">✏️</button>
+                            <button onclick="deleteTransactionHandler('${t.id}')" class="text-red-600 hover:text-red-900 mx-1 p-1 rounded hover:bg-red-50">🗑️</button>
+                        </td>
+                    `;
+                    expenseListBody.appendChild(row);
                 });
             }
-
-            // રેન્ડરિંગ પછી ઇવેન્ટ લિસનર્સ ફરીથી જોડો
-            attachActionListeners();
         }
 
-        /**
-         * એક જ વ્યવહાર માટે HTML ટેબલ પંક્તિ બનાવે છે.
-         * @param {object} t - વ્યવહાર ઓબ્જેક્ટ.
-         * @param {string} listType - 'income' અથવા 'expense'.
-         * @returns {HTMLElement} બનાવેલ ટેબલ પંક્તિ એલિમેન્ટ.
-         */
-        function createTransactionRow(t, listType) {
-            const row = document.createElement('tr');
-            row.className = 'hover:bg-gray-50 transition duration-100';
-
-            const [year, month, day] = t.date.split('-');
-            const formattedDate = `${day}/${month}/${year}`;
+        function applyFiltersAndRender() {
+            const filterType = filterTypeInput.value;
+            const filterVal = filterDateInput.value;
             
-            // યાદી પ્રકાર માટે વિશિષ્ટ ડેટા
-            let mainDetail = '';
-            if (listType === 'income') {
-                mainDetail = t.itemType || 'N/A'; // આવક માટે, આઇટમનો પ્રકાર દર્શાવો
-            } else {
-                mainDetail = t.sourceDestination || '-'; // ખર્ચ માટે, સ્ત્રોત/ગંતવ્ય દર્શાવો
+            let filteredData = [...allTransactionsData];
+            
+            if (filterType === 'monthly' && filterVal) {
+                filteredData = filteredData.filter(t => t.date.startsWith(filterVal));
+            } else if (filterType === 'yearly' && filterVal) {
+                filteredData = filteredData.filter(t => t.date.startsWith(filterVal));
             }
-
-            row.innerHTML = `
-                <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-500 w-1/5">${formattedDate}</td>
-                <td class="px-3 py-3 whitespace-nowrap text-sm text-gray-800 w-2/5">${mainDetail}</td> 
-                <td class="px-3 py-3 whitespace-nowrap text-sm font-medium text-right ${listType === 'income' ? 'text-emerald-600' : 'text-red-600'} w-1/5">
-                    ${formatCurrency(t.amount)}
-                </td>
-                <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium space-x-2 w-1/5">
-                    <!-- એડિટ બટન -->
-                    <button class="text-blue-500 hover:text-blue-700 transition duration-150 ease-in-out edit-btn" data-id="${t.id}">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                         </svg>
-                    </button>
-                    <!-- ડિલીટ બટન -->
-                    <button class="text-red-500 hover:text-red-700 transition duration-150 ease-in-out delete-btn" data-id="${t.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
-                    </button>
-                </td>
-            `;
-            // એડિટ માટે એલિમેન્ટ સાથે વ્યવહાર ડેટા જોડો
-            row.transactionData = t;
-            return row;
+            
+            // તારીખ મુજબ સોર્ટ કરો
+            filteredData.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const incomeTx = filteredData.filter(t => t.type === 'income');
+            const expenseTx = filteredData.filter(t => t.type === 'expense');
+            
+            updateSummary(filteredData);
+            calculateMonthlyAnalysis(filteredData);
+            updateItemSummary(filteredData); // NEW: Call item summary update
+            renderTransactionLists(incomeTx, expenseTx);
         }
 
-        /**
-         * બંને યાદીઓમાં ડિલીટ અને એડિટ બટનો માટે ઇવેન્ટ લિસનર્સ જોડે છે.
-         */
-        function attachActionListeners() {
-            [incomeListBody, expenseListBody].forEach(listBody => {
-                listBody.querySelectorAll('.delete-btn').forEach(button => {
-                    button.onclick = (e) => {
-                        deleteTransaction(e.currentTarget.getAttribute('data-id'));
-                    };
-                });
-                
-                listBody.querySelectorAll('.edit-btn').forEach(button => {
-                    button.onclick = (e) => {
-                        const row = e.currentTarget.closest('tr');
-                        if (row && row.transactionData) {
-                            editTransaction(row.transactionData);
-                        }
-                    };
-                });
-            });
-        }
+        // --- ઇવેન્ટ લિસનર્સ ---
 
-
-        // --- ઇવેન્ટ લિસનર્સ અને પ્રારંભિક સેટઅપ ---
-        
-        window.onload = () => {
-             // ફોર્મ તારીખને આજની તારીખ પર સેટ કરો
-             dateInput.value = new Date().toISOString().substring(0, 10);
-             // ફિલ્ટર ઇનપુટ માટે પ્રારંભિક સેટઅપ
-             updateFilterDateInput();
-             // LocalStorage માંથી વ્યવહારો લોડ કરો
-             loadTransactions(); 
-             toggleSourceDestinationVisibility(); // Add ફોર્મ માટે પ્રારંભિક દૃશ્યતા તપાસ
-        }
-
-        // કુલ રકમની આપોઆપ ગણતરી કરવા માટે જથ્થા અથવા દરમાં ફેરફારો માટે સાંભળો
-        quantityInput.addEventListener('input', calculateTotalAmount);
-        rateInput.addEventListener('input', calculateTotalAmount);
-
-        // સ્ત્રોત/ગંતવ્યની દૃશ્યતાને ટોગલ કરવા માટે પ્રકારમાં ફેરફારો માટે સાંભળો
-        typeInput.addEventListener('change', toggleSourceDestinationVisibility);
-        
-        // ફોર્મ સબમિશન (ઉમેરો અથવા અપડેટ) ને હેન્ડલ કરો
         form.addEventListener('submit', handleFormSubmit);
         
-        // એડિટ રદ્દ કરો બટન ક્લિકને હેન્ડલ કરો
+        quantityInput.addEventListener('input', calculateTotalAmount);
+        rateInput.addEventListener('input', calculateTotalAmount);
+        
+        typeInput.addEventListener('change', toggleSourceDestinationVisibility);
+        
         cancelButton.addEventListener('click', resetFormState);
-
-        // ફિલ્ટર કંટ્રોલ્સ લિસનર્સ
+        
         filterTypeInput.addEventListener('change', updateFilterDateInput);
         filterDateInput.addEventListener('change', applyFiltersAndRender);
-        filterDateInput.addEventListener('input', applyFiltersAndRender);
-        
-        // પ્રારંભિક કુલ રકમ ડિસ્પ્લેની ગણતરી કરો
-        calculateTotalAmount(); 
+
+        // --- પ્રારંભિકરણ ---
+        window.addEventListener('DOMContentLoaded', () => {
+            dateInput.value = new Date().toISOString().substring(0, 10);
+            toggleSourceDestinationVisibility();
+            loadTransactions();
+        });
     </script>
 </body>
 </html>
