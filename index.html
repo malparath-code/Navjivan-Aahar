@@ -93,12 +93,105 @@
             </div>
         </div>
 
+        <!-- Bill Detail Modal (Popup) -->
+        <div id="bill-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[100] flex justify-center items-center backdrop-blur-sm">
+            <div class="relative p-5 border w-full max-w-xl shadow-2xl rounded-xl bg-white mx-4 animate-[fadeIn_0.2s_ease-out]">
+                <div class="flex justify-between items-center mb-4 border-b pb-3">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800" id="bill-modal-title">બિલ વિગત</h3>
+                        <p class="text-sm text-gray-500" id="bill-modal-subtitle">તારીખ અને પાર્ટીનું નામ</p>
+                    </div>
+                    <button onclick="closeBillModal()" class="text-gray-400 hover:text-red-500 transition font-bold text-3xl leading-none">&times;</button>
+                </div>
+                <div class="overflow-x-auto max-h-[60vh] overflow-y-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">વસ્તુ</th>
+                                <th class="px-4 py-2 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">જથ્થો</th>
+                                <th class="px-4 py-2 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">ભાવ</th>
+                                <th class="px-4 py-2 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">કુલ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bill-modal-body" class="divide-y divide-gray-100 bg-white">
+                            <!-- Items will be populated here -->
+                        </tbody>
+                        <tfoot class="bg-gray-50 font-bold sticky bottom-0">
+                            <tr>
+                                <td colspan="3" class="px-4 py-3 text-right text-gray-700">Grand Total:</td>
+                                <td class="px-4 py-3 text-right text-gray-900" id="bill-modal-total">₹ 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="mt-5 text-right">
+                    <button onclick="closeBillModal()" class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg font-semibold hover:bg-gray-300 transition shadow-sm">બંધ કરો</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Report Modal (New) -->
+        <div id="daily-report-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-[100] flex justify-center items-center backdrop-blur-sm">
+            <div class="relative p-6 border w-full max-w-lg shadow-2xl rounded-xl bg-white mx-4 animate-[fadeIn_0.2s_ease-out]">
+                <div class="flex justify-between items-center mb-6 border-b pb-3">
+                    <h3 class="text-2xl font-bold text-indigo-800 flex items-center">
+                        <span class="mr-2">📅</span> દૈનિક વેચાણ રિપોર્ટ
+                    </h3>
+                    <button onclick="closeDailyReport()" class="text-gray-400 hover:text-red-500 transition font-bold text-3xl leading-none">&times;</button>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">તારીખ પસંદ કરો:</label>
+                    <input type="date" id="report-date" class="w-full p-3 border-2 border-indigo-100 rounded-lg focus:border-indigo-500 focus:ring focus:ring-indigo-200 transition font-semibold text-gray-700" onchange="renderDailyReport()">
+                </div>
+
+                <div class="bg-indigo-50 rounded-lg border border-indigo-100 overflow-hidden">
+                    <table class="min-w-full divide-y divide-indigo-200">
+                        <thead class="bg-indigo-100">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-bold text-indigo-800 uppercase">વસ્તુનું નામ</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-indigo-800 uppercase">વેચાયેલ નંગ (Qty)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="daily-report-body" class="divide-y divide-indigo-100 bg-white">
+                            <tr><td colspan="2" class="px-4 py-3 text-center text-gray-500">તારીખ પસંદ કરો...</td></tr>
+                        </tbody>
+                        <tfoot class="bg-indigo-50 font-bold">
+                            <tr>
+                                <td class="px-4 py-3 text-indigo-900">કુલ નંગ (Total Qty)</td>
+                                <td class="px-4 py-3 text-right text-indigo-900" id="daily-report-total-qty">0</td>
+                            </tr>
+                            <tr class="bg-emerald-100 text-emerald-900">
+                                <td class="px-4 py-3">કુલ આવક (Total Income)</td>
+                                <td class="px-4 py-3 text-right text-xl" id="daily-report-total-amount">₹ 0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <div class="mt-4 text-right text-sm text-gray-500">
+                    * આ રિપોર્ટ માત્ર વેચાણ (આવક) માટે છે.
+                </div>
+
+                <div class="mt-6 text-center">
+                    <button onclick="closeDailyReport()" class="w-full bg-indigo-600 text-white px-4 py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg">બંધ કરો</button>
+                </div>
+            </div>
+        </div>
+
         <header class="mb-8 border-b-4 border-emerald-500 pb-4">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center">
                 નવજીવન પશુઆહાર (Khātā Pōthī)
             </h1>
             <p class="text-center text-sm text-gray-600 mt-1">ઑફલાઇન આવક અને ખર્ચનો હિસાબ (Offline Income & Expense Tracker)</p>
         </header>
+
+        <!-- ઝડપી રિપોર્ટ બટન -->
+        <section class="mb-6 flex justify-center">
+            <button onclick="openDailyReport()" class="flex items-center justify-center bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition duration-200">
+                <span class="text-xl mr-2">📊</span> આજનો / દૈનિક હિસાબ (Daily Report)
+            </button>
+        </section>
 
         <!-- ડેટા મેનેજમેન્ટ -->
         <section class="mb-8 p-6 bg-indigo-50 rounded-xl border border-indigo-200 shadow-md">
@@ -123,7 +216,7 @@
             </div>
         </section>
 
-        <!-- એડવાન્સ ફિલ્ટર અને સર્ચ (NEW FEATURE) -->
+        <!-- એડવાન્સ ફિલ્ટર અને સર્ચ -->
         <section class="mb-8 p-4 bg-yellow-50 rounded-xl border border-yellow-200 shadow-md">
             <h2 class="text-lg font-semibold mb-3 text-yellow-800">હિસાબ શોધો અને ફિલ્ટર કરો (Search & Filter)</h2>
             
@@ -147,7 +240,7 @@
                     <label for="filter-type" class="block text-sm font-medium text-gray-700 mb-1">સમયગાળો (Duration)</label>
                     <select id="filter-type" class="w-full large-input border rounded-lg focus:ring-yellow-500 focus:border-yellow-500 bg-white">
                         <option value="all">બધો સમય (All Time)</option>
-                        <option value="monthly">મહિના મુજબ (Monthly)</option>
+                        <option value="monthly" selected>મહિના મુજબ (Monthly)</option>
                         <option value="yearly">વર્ષ મુજબ (Yearly)</option>
                         <option value="custom">તારીખ રેન્જ (Custom Date)</option>
                     </select>
@@ -156,8 +249,6 @@
                 <!-- તારીખ ઇનપુટ્સ (Dynamic) -->
                 <div class="sm:col-span-5" id="date-inputs-container">
                     <!-- અહીં JavaScript થી ઇનપુટ આવશે -->
-                    <label class="block text-sm font-medium text-gray-700 mb-1">તારીખ (Date)</label>
-                    <input type="month" id="filter-date-month" class="w-full large-input border rounded-lg disabled:bg-gray-100" disabled>
                 </div>
             </div>
             
@@ -228,7 +319,16 @@
 
         <!-- ફોર્મ -->
         <section class="mb-10 p-6 bg-gray-50 rounded-xl border border-gray-200 shadow-lg">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700" id="form-title">નવો વ્યવહાર (Add Transaction)</h2>
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-xl font-semibold text-gray-700" id="form-title">વ્યવહાર ઉમેરો</h2>
+                <!-- Mode Toggle -->
+                <div class="flex bg-gray-200 p-1 rounded-lg">
+                    <button onclick="switchMode('single')" id="btn-mode-single" class="px-3 py-1 rounded-md text-sm font-bold bg-white shadow text-gray-800 transition">એક (Single)</button>
+                    <button onclick="switchMode('bulk')" id="btn-mode-bulk" class="px-3 py-1 rounded-md text-sm font-bold text-gray-500 hover:text-gray-800 transition">એક સાથે અનેક (Bill)</button>
+                </div>
+            </div>
+
+            <!-- Single Entry Form -->
             <form id="transaction-form" class="grid grid-cols-1 md:grid-cols-8 gap-4 items-end">
                 <div class="md:col-span-1">
                     <label class="block text-xs font-medium text-gray-700 mb-1">તારીખ</label>
@@ -264,7 +364,7 @@
                     <input type="hidden" id="amount-hidden">
                 </div>
                 <div class="md:col-span-1" id="source-destination-group">
-                    <label class="block text-xs font-medium text-gray-700 mb-1">કોને/ક્યાંથી?</label>
+                    <label id="source-dest-label" class="block text-xs font-medium text-gray-700 mb-1">કોને આપ્યું</label>
                     <input type="text" id="source-destination" placeholder="નામ" required class="w-full large-input border rounded-lg">
                 </div>
                 <div class="md:col-span-1">
@@ -279,6 +379,60 @@
                     <button type="button" id="cancel-edit-button" class="w-full bg-gray-400 text-white font-bold py-3 px-2 rounded-xl shadow mt-2 hidden text-sm">રદ્દ</button>
                 </div>
             </form>
+
+            <!-- Bulk Entry Form -->
+            <div id="bulk-entry-form" class="hidden">
+                <!-- Common Details -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">તારીખ</label>
+                        <input type="date" id="bulk-date" class="w-full p-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label id="bulk-source-label" class="block text-xs font-medium text-gray-700 mb-1">કોને આપ્યું</label>
+                        <input type="text" id="bulk-source" placeholder="પાર્ટીનું નામ" class="w-full p-2 border rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-700 mb-1">વ્યવહાર પ્રકાર</label>
+                        <select id="bulk-type" class="w-full p-2 border rounded-lg bg-white">
+                            <option value="income">આવક (Income)</option>
+                            <option value="expense">ખર્ચ (Expense)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Items List -->
+                <div class="border rounded-lg overflow-hidden mb-4">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3 w-1/3">વસ્તુ (Item)</th>
+                                <th class="px-4 py-3 w-1/6">બોરી (Qty)</th>
+                                <th class="px-4 py-3 w-1/6">ભાવ (Rate)</th>
+                                <th class="px-4 py-3 w-1/6">કુલ (Total)</th>
+                                <th class="px-4 py-3 w-1/12">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-items-body">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                        <tfoot>
+                             <tr class="bg-gray-50 font-bold">
+                                <td colspan="3" class="px-4 py-3 text-right">Grand Total:</td>
+                                <td class="px-4 py-3 text-gray-900" id="bulk-grand-total">₹ 0</td>
+                                <td></td>
+                             </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button onclick="addBulkRow()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg text-sm font-bold">+ બીજી વસ્તુ ઉમેરો</button>
+                    <button id="btn-save-bulk" onclick="saveBulkData()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold ml-auto">બધું સાચવો (Save All)</button>
+                    <button onclick="cancelBulkEdit()" id="btn-cancel-bulk" class="hidden px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg text-sm font-bold">રદ્દ</button>
+                </div>
+            </div>
+
             <p id="status-message" class="text-center text-sm mt-3 font-semibold"></p>
         </section>
 
@@ -331,7 +485,8 @@
         
         let allTransactionsData = [];
         let tempImportedData = []; // To store imported data temporarily for preview
-        let editingTransactionId = null; 
+        let editingTransactionId = null;
+        let editingBillId = null; // To track if we are editing a bill
         let isPreviewMode = false;
 
         // --- DOM Elements ---
@@ -383,6 +538,18 @@
             },
             preview: {
                 banner: document.getElementById('preview-banner')
+            },
+            bulk: {
+                form: document.getElementById('bulk-entry-form'),
+                btnSingle: document.getElementById('btn-mode-single'),
+                btnBulk: document.getElementById('btn-mode-bulk'),
+                body: document.getElementById('bulk-items-body'),
+                total: document.getElementById('bulk-grand-total'),
+                date: document.getElementById('bulk-date'),
+                source: document.getElementById('bulk-source'),
+                type: document.getElementById('bulk-type'),
+                btnSave: document.getElementById('btn-save-bulk'),
+                btnCancel: document.getElementById('btn-cancel-bulk')
             }
         };
 
@@ -406,15 +573,219 @@
         };
 
         const toggleSourceDest = () => {
+            const label = document.getElementById('source-dest-label');
             if (els.inputs.type.value === 'expense') {
                 els.inputs.sourceDestGroup.classList.remove('hidden');
                 els.inputs.sourceDest.required = true;
                 els.inputs.sourceDest.placeholder = "કોને ચૂકવ્યા?";
+                label.textContent = "કોને ચૂકવ્યા";
             } else {
-                els.inputs.sourceDestGroup.classList.add('hidden');
-                els.inputs.sourceDest.required = false;
-                if (!editingTransactionId) els.inputs.sourceDest.value = '';
+                els.inputs.sourceDestGroup.classList.remove('hidden');
+                els.inputs.sourceDest.required = true;
+                els.inputs.sourceDest.placeholder = "કોને આપ્યું?";
+                label.textContent = "કોને આપ્યું";
             }
+        };
+
+        // --- Mode Switcher (Single vs Bulk) ---
+        window.switchMode = (mode) => {
+            // Clear editing state if switching manually
+            if(mode === 'single') {
+                cancelBulkEdit(); // Clear bulk state
+                els.form.classList.remove('hidden');
+                els.bulk.form.classList.add('hidden');
+                els.bulk.btnSingle.className = "px-3 py-1 rounded-md text-sm font-bold bg-white shadow text-gray-800 transition";
+                els.bulk.btnBulk.className = "px-3 py-1 rounded-md text-sm font-bold text-gray-500 hover:text-gray-800 transition";
+            } else {
+                els.form.classList.add('hidden');
+                els.bulk.form.classList.remove('hidden');
+                els.bulk.btnSingle.className = "px-3 py-1 rounded-md text-sm font-bold text-gray-500 hover:text-gray-800 transition";
+                els.bulk.btnBulk.className = "px-3 py-1 rounded-md text-sm font-bold bg-white shadow text-gray-800 transition";
+                
+                // Set default date for bulk if empty
+                if(!els.bulk.date.value) els.bulk.date.valueAsDate = new Date();
+                // Add one empty row if none exist AND we are not editing
+                if(els.bulk.body.children.length === 0 && !editingBillId) addBulkRow();
+            }
+        };
+
+        // --- Bulk Entry Logic ---
+        window.addBulkRow = () => {
+            const rowId = generateId();
+            const tr = document.createElement('tr');
+            tr.id = `row-${rowId}`;
+            tr.className = "bg-white border-b hover:bg-gray-50";
+            tr.innerHTML = `
+                <td class="px-4 py-2">
+                    <select class="w-full p-1 border rounded text-sm item-select" onchange="updateBulkTotal('${rowId}')">
+                        <option value="" disabled selected>પસંદ કરો</option>
+                        <option value="મકાઈ પાપડી">મકાઈ પાપડી</option>
+                        <option value="મકાઈ ભરડો">મકાઈ ભરડો</option>
+                        <option value="પાપડી">પાપડી</option>
+                        <option value="જવ ભરડો">જવ ભરડો</option>
+                        <option value="સોયાબીન">સોયાબીન</option>
+                        <option value="તુવેરચુની">તુવેરચુની</option>
+                        <option value="પશુ આહાર">પશુ આહાર</option>
+                        <option value="લાલી">લાલી</option>
+                        <option value="દાણ">દાણ</option>
+                        <option value="અન્ય">અન્ય</option>
+                    </select>
+                </td>
+                <td class="px-4 py-2">
+                    <input type="number" class="w-full p-1 border rounded text-sm text-right qty-input" min="1" placeholder="0" oninput="updateBulkTotal('${rowId}')">
+                </td>
+                <td class="px-4 py-2">
+                    <input type="number" class="w-full p-1 border rounded text-sm text-right rate-input" min="0" step="0.01" placeholder="0" oninput="updateBulkTotal('${rowId}')">
+                </td>
+                <td class="px-4 py-2 text-right font-bold text-gray-700 total-cell">₹ 0</td>
+                <td class="px-4 py-2 text-center">
+                    <button onclick="removeBulkRow('${rowId}')" class="text-red-500 hover:text-red-700 font-bold">×</button>
+                </td>
+            `;
+            els.bulk.body.appendChild(tr);
+            return tr;
+        };
+
+        window.removeBulkRow = (id) => {
+            const row = document.getElementById(`row-${id}`);
+            if(row) row.remove();
+            calculateBulkGrandTotal();
+        };
+
+        window.updateBulkTotal = (rowId) => {
+            const row = document.getElementById(`row-${rowId}`);
+            const q = parseFloat(row.querySelector('.qty-input').value) || 0;
+            const r = parseFloat(row.querySelector('.rate-input').value) || 0;
+            const total = q * r;
+            row.querySelector('.total-cell').innerText = formatCurrency(total);
+            row.setAttribute('data-total', total);
+            calculateBulkGrandTotal();
+        };
+
+        const calculateBulkGrandTotal = () => {
+            let grand = 0;
+            const rows = els.bulk.body.querySelectorAll('tr');
+            rows.forEach(r => {
+                grand += parseFloat(r.getAttribute('data-total') || 0);
+            });
+            els.bulk.total.innerText = formatCurrency(grand);
+        };
+
+        window.saveBulkData = () => {
+            const date = els.bulk.date.value;
+            const source = els.bulk.source.value.trim();
+            const type = els.bulk.type.value;
+
+            if(!date || !source) return alert("કૃપા કરીને તારીખ અને નામ ભરો.");
+
+            const rows = els.bulk.body.querySelectorAll('tr');
+            if(rows.length === 0) return alert("કોઈ વસ્તુ ઉમેરેલ નથી.");
+
+            let entriesToAdd = [];
+            let isValid = true;
+            
+            // If editing, reuse the ID, otherwise create new
+            const billId = editingBillId || generateId();
+
+            rows.forEach(r => {
+                const itemType = r.querySelector('.item-select').value;
+                const q = parseFloat(r.querySelector('.qty-input').value);
+                const rate = parseFloat(r.querySelector('.rate-input').value);
+                const total = parseFloat(r.getAttribute('data-total'));
+
+                if(!itemType || !q || !rate) {
+                    isValid = false;
+                } else {
+                    entriesToAdd.push({
+                        id: generateId(), 
+                        billId: billId, 
+                        date: date,
+                        itemType: itemType,
+                        quantity: q,
+                        rate: rate,
+                        amount: total,
+                        sourceDest: source,
+                        type: type
+                    });
+                }
+            });
+
+            if(!isValid) return alert("બધી વસ્તુની વિગત (નામ, જથ્થો, ભાવ) ભરો.");
+
+            // If editing, first remove old entries for this bill
+            if(editingBillId) {
+                allTransactionsData = allTransactionsData.filter(t => t.billId !== editingBillId);
+            }
+
+            // Add all new entries
+            entriesToAdd.forEach(e => allTransactionsData.push(e));
+            
+            // Clean up state
+            editingBillId = null;
+            els.bulk.btnSave.textContent = "બધું સાચવો (Save All)";
+            els.bulk.btnCancel.classList.add('hidden');
+            
+            saveData();
+            renderAll();
+            
+            // Reset Bulk Form
+            els.bulk.body.innerHTML = '';
+            els.bulk.source.value = '';
+            els.bulk.total.innerText = '₹ 0';
+            addBulkRow(); // Add one fresh row
+            
+            showStatus(editingBillId ? `બિલ સુધારાઈ ગયું!` : `${entriesToAdd.length} વસ્તુઓનું બિલ ઉમેરાઈ ગયું!`);
+        };
+        
+        window.cancelBulkEdit = () => {
+            editingBillId = null;
+            els.bulk.btnSave.textContent = "બધું સાચવો (Save All)";
+            els.bulk.btnCancel.classList.add('hidden');
+            els.bulk.body.innerHTML = '';
+            els.bulk.source.value = '';
+            els.bulk.total.innerText = '₹ 0';
+            addBulkRow();
+        };
+
+        window.editBill = (billId) => {
+            // 1. Find all transactions for this bill
+            const billItems = allTransactionsData.filter(t => t.billId === billId);
+            if(billItems.length === 0) return;
+
+            // 2. Switch to bulk mode
+            els.form.classList.add('hidden');
+            els.bulk.form.classList.remove('hidden');
+            els.bulk.btnSingle.className = "px-3 py-1 rounded-md text-sm font-bold text-gray-500 hover:text-gray-800 transition";
+            els.bulk.btnBulk.className = "px-3 py-1 rounded-md text-sm font-bold bg-white shadow text-gray-800 transition";
+
+            // 3. Populate Header Data
+            const first = billItems[0];
+            els.bulk.date.value = first.date;
+            els.bulk.source.value = first.sourceDest;
+            els.bulk.type.value = first.type;
+
+            // 4. Populate Rows
+            els.bulk.body.innerHTML = ''; // Clear existing rows
+            billItems.forEach(item => {
+                const tr = addBulkRow(); // Create row
+                const rowId = tr.id.replace('row-', '');
+                
+                // Set values
+                tr.querySelector('.item-select').value = item.itemType;
+                tr.querySelector('.qty-input').value = item.quantity;
+                tr.querySelector('.rate-input').value = item.rate;
+                
+                // Trigger update logic to set totals
+                updateBulkTotal(rowId);
+            });
+
+            // 5. Set Edit Mode State
+            editingBillId = billId;
+            els.bulk.btnSave.textContent = "અપડેટ બિલ (Update)";
+            els.bulk.btnCancel.classList.remove('hidden');
+            
+            // 6. Scroll to form
+            els.bulk.form.scrollIntoView({ behavior: 'smooth' });
         };
 
         // --- Data Management ---
@@ -435,21 +806,15 @@
         const exportData = () => {
             let dataToExport = [...allTransactionsData];
             let filenameSuffix = 'All';
-
-            // Check for Monthly Filter
+            // Check for Monthly Filter logic...
             const type = els.filter.type.value;
-            if (type === 'monthly') {
-                const val = document.getElementById('filter-date-dynamic')?.value; // YYYY-MM
-                if(val) {
-                    dataToExport = dataToExport.filter(t => t.date.startsWith(val));
-                    filenameSuffix = val;
-                }
-            } else if (type === 'yearly') {
-                 const val = document.getElementById('filter-date-dynamic')?.value;
-                 if(val) {
-                    dataToExport = dataToExport.filter(t => t.date.startsWith(val));
-                    filenameSuffix = val;
-                 }
+            const dynamicDateInput = document.getElementById('filter-date-dynamic');
+            if (type === 'monthly' && dynamicDateInput && dynamicDateInput.value) {
+                dataToExport = dataToExport.filter(t => t.date.startsWith(dynamicDateInput.value));
+                filenameSuffix = dynamicDateInput.value;
+            } else if (type === 'yearly' && dynamicDateInput && dynamicDateInput.value) {
+                 dataToExport = dataToExport.filter(t => t.date.startsWith(dynamicDateInput.value));
+                 filenameSuffix = dynamicDateInput.value;
             }
 
             if(!dataToExport.length) return showStatus("ડાઉનલોડ કરવા માટે કોઈ ડેટા નથી.", 'error');
@@ -464,17 +829,11 @@
 
         const resetFile = () => {
             if(confirm("શું તમે ખાતાની ફાઈલ રિસેટ કરવા માંગો છો?\n\nઆનાથી અત્યારનો બધો ડેટા જતો રહેશે અને નવું કોરું ખાતું શરૂ થશે.")) {
-                // 1. Save Backup
                 localStorage.setItem(BACKUP_KEY, JSON.stringify(allTransactionsData));
-                
-                // 2. Clear Main Data
                 localStorage.removeItem(STORAGE_KEY);
                 allTransactionsData = [];
                 loadData();
-                
-                // 3. Show Undo Button
                 els.buttons.undo.classList.remove('hidden');
-                
                 showStatus("ફાઈલ રિસેટ થઈ ગઈ. જૂનો ડેટા 'Undo' બટનથી પાછો લાવી શકાશે.");
             }
         };
@@ -486,7 +845,7 @@
                     allTransactionsData = JSON.parse(backup);
                     saveData();
                     renderAll();
-                    els.buttons.undo.classList.add('hidden'); // Hide after restore
+                    els.buttons.undo.classList.add('hidden');
                     showStatus("જૂનો ડેટા પાછો આવી ગયો!");
                 }
             } else {
@@ -502,15 +861,11 @@
                     const data = JSON.parse(e.target.result);
                     if(Array.isArray(data)) {
                         isPreviewMode = true;
-                        tempImportedData = data; // Store temporarily
-                        
-                        // Render the preview (imported data only)
-                        // NOTE: We render tempImportedData but DO NOT save it to allTransactionsData yet
-                        renderDataList(tempImportedData); 
-                        
+                        tempImportedData = data;
+                        renderAll();
                         els.preview.banner.classList.remove('hidden');
-                        els.inputs.submit.disabled = true; // Disable adding in preview
-                        showStatus("પ્રિવ્યુ મોડ ચાલુ છે. આ ડેટા માત્ર જોવા માટે છે.");
+                        els.buttons.submit.disabled = true;
+                        showStatus("પ્રિવ્યુ મોડ ચાલુ છે.");
                     } else showStatus("ખોટી ફાઈલ છે.", 'error');
                 } catch(err) { showStatus("ફાઈલ વાંચી શકાઈ નથી.", 'error'); }
                 input.value = '';
@@ -520,317 +875,467 @@
 
         const confirmImport = () => {
             if(confirm("આ ડેટા તમારા જૂના ડેટામાં ઉમેરાશે (Merge). શું તમે આગળ વધવા માંગો છો?")) {
-                // Merge Logic
-                // We use a Map to avoid exact duplicates based on ID
                 const mergedMap = new Map();
-                
-                // 1. Add existing data
                 allTransactionsData.forEach(item => mergedMap.set(item.id, item));
-                
-                // 2. Add/Overwrite with imported data
-                // If you prefer to KEEP old data on conflict, switch the order. 
-                // Here we assume imported data might have updates, or just new data.
-                // If we just want to append new IDs:
                 tempImportedData.forEach(item => {
-                    // Only add if ID doesn't exist, OR regenerate ID if you want to allow duplicates.
-                    // To properly merge without deleting old unique entries:
+                    if(!item.id) item.id = generateId();
                     mergedMap.set(item.id, item);
                 });
-
                 allTransactionsData = Array.from(mergedMap.values());
-                
-                // Sort again
                 allTransactionsData.sort((a,b) => new Date(b.date) - new Date(a.date));
-
                 saveData();
                 isPreviewMode = false;
                 tempImportedData = [];
                 els.preview.banner.classList.add('hidden');
-                els.inputs.submit.disabled = false;
-                
-                renderAll(); // Re-render the merged data
+                els.buttons.submit.disabled = false;
+                renderAll();
                 showStatus("ડેટા સફળતાપૂર્વક મર્જ (Merge) થઈ ગયો!");
             }
         };
 
         const cancelImport = () => {
-            // Just re-render the original allTransactionsData
-            renderAll();
             isPreviewMode = false;
             tempImportedData = [];
             els.preview.banner.classList.add('hidden');
-            els.inputs.submit.disabled = false;
+            els.buttons.submit.disabled = false;
+            renderAll();
             showStatus("ઓરીજીનલ ડેટા પાછો આવી ગયો.");
         };
 
         // --- Filter Logic ---
         const updateFilterInputs = () => {
             const type = els.filter.type.value;
-            els.filter.container.innerHTML = ''; // Clear
-
+            els.filter.container.innerHTML = '';
             if (type === 'all') {
                 els.filter.container.innerHTML = `<label class="block text-sm font-medium text-gray-700 mb-1">તારીખ</label><input type="text" disabled value="બધો ડેટા" class="w-full large-input border rounded-lg bg-gray-100 text-gray-500">`;
             } else if (type === 'monthly') {
                 els.filter.container.innerHTML = `<label class="block text-sm font-medium text-gray-700 mb-1">મહિનો</label><input type="month" id="filter-date-dynamic" class="w-full large-input border rounded-lg">`;
-                document.getElementById('filter-date-dynamic').value = new Date().toISOString().slice(0,7);
-                document.getElementById('filter-date-dynamic').addEventListener('change', renderAll);
+                const monthInput = document.getElementById('filter-date-dynamic');
+                monthInput.value = new Date().toISOString().slice(0,7);
+                monthInput.addEventListener('change', renderAll);
             } else if (type === 'yearly') {
                 els.filter.container.innerHTML = `<label class="block text-sm font-medium text-gray-700 mb-1">વર્ષ</label><input type="number" id="filter-date-dynamic" min="2000" max="2100" class="w-full large-input border rounded-lg">`;
-                document.getElementById('filter-date-dynamic').value = new Date().getFullYear();
-                document.getElementById('filter-date-dynamic').addEventListener('input', renderAll);
+                const yearInput = document.getElementById('filter-date-dynamic');
+                yearInput.value = new Date().getFullYear();
+                yearInput.addEventListener('input', renderAll);
             } else if (type === 'custom') {
-                const template = document.getElementById('custom-date-template').cloneNode(true);
-                template.classList.remove('hidden');
-                template.id = '';
-                els.filter.container.appendChild(template);
-                template.querySelector('#filter-start-date').addEventListener('change', renderAll);
-                template.querySelector('#filter-end-date').addEventListener('change', renderAll);
+                const template = document.getElementById('custom-date-template').innerHTML;
+                els.filter.container.innerHTML = template;
+                document.getElementById('filter-start-date').addEventListener('change', renderAll);
+                document.getElementById('filter-end-date').addEventListener('change', renderAll);
             }
             renderAll();
         };
 
-        // --- Rendering ---
-        // Modified to accept data argument so we can reuse it for preview
-        const renderDataList = (dataSet) => {
-            let filtered = [...dataSet];
-            
-            if (!isPreviewMode) {
-                 // 1. Apply Search
-                const searchTerm = els.inputs.search.value.toLowerCase();
-                if(searchTerm) {
-                    filtered = filtered.filter(t => 
-                        t.itemType.toLowerCase().includes(searchTerm) || 
-                        (t.sourceDestination && t.sourceDestination.toLowerCase().includes(searchTerm)) ||
-                        t.amount.toString().includes(searchTerm)
-                    );
-                }
-
-                // 2. Apply Date Filter
-                const type = els.filter.type.value;
-                if(type === 'monthly') {
-                    const val = document.getElementById('filter-date-dynamic')?.value;
-                    if(val) filtered = filtered.filter(t => t.date.startsWith(val));
-                } else if (type === 'yearly') {
-                    const val = document.getElementById('filter-date-dynamic')?.value;
-                    if(val) filtered = filtered.filter(t => t.date.startsWith(val));
-                } else if (type === 'custom') {
-                    const start = els.filter.container.querySelector('#filter-start-date')?.value;
-                    const end = els.filter.container.querySelector('#filter-end-date')?.value;
-                    if(start) filtered = filtered.filter(t => t.date >= start);
-                    if(end) filtered = filtered.filter(t => t.date <= end);
-                }
+        const getFilteredData = () => {
+            let data = isPreviewMode ? tempImportedData : allTransactionsData;
+            const query = els.inputs.search.value.toLowerCase();
+            if (query) {
+                data = data.filter(t => 
+                    t.itemType.toLowerCase().includes(query) || 
+                    t.sourceDest.toLowerCase().includes(query) ||
+                    t.amount.toString().includes(query)
+                );
             }
+            const type = els.filter.type.value;
+            const dynamicDateInput = document.getElementById('filter-date-dynamic');
 
-            // Split Data
-            const incomeData = filtered.filter(t => t.type === 'income');
-            const expenseData = filtered.filter(t => t.type === 'expense');
-
-            // Render Tables
-            renderTable(incomeData, els.lists.income, els.lists.noIncome);
-            renderTable(expenseData, els.lists.expense, els.lists.noExpense);
-
-            // Render Summaries
-            renderSummaryStats(filtered);
-        }
-
-        const renderAll = () => {
-            renderDataList(allTransactionsData);
+            if (type === 'monthly' && dynamicDateInput && dynamicDateInput.value) {
+                data = data.filter(t => t.date.startsWith(dynamicDateInput.value));
+            } else if (type === 'yearly' && dynamicDateInput && dynamicDateInput.value) {
+                data = data.filter(t => t.date.startsWith(dynamicDateInput.value));
+            } else if (type === 'custom') {
+                const start = document.getElementById('filter-start-date')?.value;
+                const end = document.getElementById('filter-end-date')?.value;
+                if (start) data = data.filter(t => t.date >= start);
+                if (end) data = data.filter(t => t.date <= end);
+            }
+            return data.sort((a, b) => new Date(b.date) - new Date(a.date));
         };
 
-        const renderTable = (data, tbody, noDataMsg) => {
-            tbody.innerHTML = '';
-            if(!data.length) {
-                noDataMsg.classList.remove('hidden');
+        // --- Rendering ---
+        const renderAll = () => {
+            const filteredData = getFilteredData();
+
+            // Calculate Totals
+            let income = 0, expense = 0;
+            filteredData.forEach(t => {
+                if (t.type === 'income') income += t.amount;
+                else expense += t.amount;
+            });
+
+            els.summary.income.innerText = formatCurrency(income);
+            els.summary.expense.innerText = formatCurrency(expense);
+            els.summary.balance.innerText = formatCurrency(income - expense);
+            els.summary.balance.className = `text-2xl font-bold mt-1 ${income - expense >= 0 ? 'text-blue-600' : 'text-red-600'}`;
+
+            renderTable(filteredData.filter(t => t.type === 'income'), 'income', els.lists.income, els.lists.noIncome);
+            renderTable(filteredData.filter(t => t.type === 'expense'), 'expense', els.lists.expense, els.lists.noExpense);
+
+            renderStockSummary(filteredData);
+            renderMonthlyAnalysis(filteredData);
+        };
+
+        const renderTable = (data, type, tableBody, noMsg) => {
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                noMsg.classList.remove('hidden');
                 return;
             }
-            noDataMsg.classList.add('hidden');
-            data.forEach(item => {
+            noMsg.classList.add('hidden');
+
+            // NEW: Logic to group items by billId
+            const renderedBillIds = new Set();
+
+            data.forEach(t => {
+                if (t.billId) {
+                    // Handle Bill Grouping
+                    if (renderedBillIds.has(t.billId)) return; // Skip if already rendered
+
+                    // Find all parts of this bill from the *total* data (or filtered data?)
+                    // Using allTransactionsData ensures correct total even if filter hides some parts, 
+                    // but usually filters (date/name) keep bills together.
+                    const billItems = allTransactionsData.filter(x => x.billId === t.billId);
+                    
+                    // Double check if we should render this based on current view filters
+                    // If none of the items are in 'data', we wouldn't be here.
+                    
+                    const totalQty = billItems.reduce((sum, i) => sum + i.quantity, 0);
+                    const totalAmt = billItems.reduce((sum, i) => sum + i.amount, 0);
+                    
+                    // Create a summarized name string
+                    const names = [...new Set(billItems.map(i => i.itemType))].join(', ');
+                    const dateObj = new Date(t.date);
+                    const dateStr = `${dateObj.getDate().toString().padStart(2,'0')}-${(dateObj.getMonth()+1).toString().padStart(2,'0')}-${dateObj.getFullYear()}`;
+
+                    const row = document.createElement('tr');
+                    row.className = "bg-yellow-50 border-b hover:bg-yellow-100 transition"; // Highlight bills slightly
+                    row.innerHTML = `
+                        <td class="px-3 py-3 whitespace-nowrap text-xs font-medium text-gray-900">
+                            ${dateStr}
+                            <div class="text-gray-500 text-[10px] font-bold">${t.sourceDest}</div>
+                        </td>
+                        <td class="px-3 py-3 text-xs text-gray-500 break-words">
+                            <span class="font-bold text-indigo-700">બિલ (${billItems.length} વસ્તુ):</span> ${names}<br>
+                            <span class="font-semibold text-black">કુલ ${totalQty} નંગ</span>
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-bold ${type === 'income' ? 'text-emerald-600' : 'text-red-600'}">
+                            ${formatCurrency(totalAmt)}
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-xs text-center flex justify-center items-center space-x-1 h-full">
+                            ${!isPreviewMode ? `
+                            <button onclick="viewBill('${t.billId}')" class="flex items-center justify-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-200 transition shadow-sm" title="બિલ જોવો">
+                                👁️ <span class="ml-1 hidden md:inline">જોવો</span>
+                            </button>
+                            <button onclick="editBill('${t.billId}')" class="flex items-center justify-center text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 px-2 py-1 rounded border border-green-200 transition shadow-sm" title="બિલ સુધારો">
+                                ✏️ <span class="ml-1 hidden md:inline">સુધારો</span>
+                            </button>
+                            <button onclick="deleteBill('${t.billId}')" class="flex items-center justify-center text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-2 py-1 rounded border border-red-200 transition shadow-sm" title="બિલ ડિલીટ કરો">
+                                🗑️
+                            </button>
+                            ` : `<span class="text-gray-400">Locked</span>`}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    renderedBillIds.add(t.billId);
+
+                } else {
+                    // Handle Normal Single Entry
+                    const row = document.createElement('tr');
+                    const d = new Date(t.date);
+                    const dateStr = `${d.getDate().toString().padStart(2,'0')}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getFullYear()}`;
+                    
+                    row.innerHTML = `
+                        <td class="px-3 py-3 whitespace-nowrap text-xs font-medium text-gray-900">
+                            ${dateStr}
+                            <div class="text-gray-400 text-[10px]">${t.sourceDest}</div>
+                        </td>
+                        <td class="px-3 py-3 text-xs text-gray-500 break-words">
+                            <span class="font-bold text-gray-700">${t.itemType}</span><br>
+                            ${t.quantity} નંગ x ${t.rate}
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-xs text-right font-bold ${type === 'income' ? 'text-emerald-600' : 'text-red-600'}">
+                            ${formatCurrency(t.amount)}
+                        </td>
+                        <td class="px-3 py-3 whitespace-nowrap text-xs text-center flex justify-center items-center space-x-1">
+                            ${!isPreviewMode ? `
+                            <button onclick="editTransaction('${t.id}')" class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50" title="સુધારો">✏️</button>
+                            <button onclick="deleteTransaction('${t.id}')" class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50" title="ડિલીટ">🗑️</button>
+                            ` : `<span class="text-gray-400">Locked</span>`}
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                }
+            });
+        };
+
+        const renderStockSummary = (data) => {
+            const summary = {};
+            data.forEach(t => {
+                if (!summary[t.itemType]) summary[t.itemType] = { in: 0, out: 0 };
+                if (t.type === 'income') summary[t.itemType].in += t.quantity;
+                else summary[t.itemType].out += t.quantity;
+            });
+            const tbody = els.summary.itemBody;
+            tbody.innerHTML = '';
+            if(Object.keys(summary).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">માહિતી નથી</td></tr>';
+                return;
+            }
+            Object.keys(summary).forEach(item => {
                 const row = document.createElement('tr');
-                const dateParts = item.date.split('-');
-                const displayDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-                const color = item.type === 'income' ? 'text-emerald-600' : 'text-red-600';
-                
                 row.innerHTML = `
-                    <td class="px-3 py-3 text-sm text-gray-600 align-top">${displayDate}</td>
-                    <td class="px-3 py-3 text-sm text-gray-700 align-top">
-                        <div class="font-bold">${item.itemType}</div>
-                        <div class="text-xs text-gray-500">${item.quantity} બોરી x ${item.rate}</div>
-                        ${item.sourceDestination ? `<div class="text-xs italic text-gray-500 mt-1">To/From: ${item.sourceDestination}</div>` : ''}
-                    </td>
-                    <td class="px-3 py-3 text-right text-sm font-bold ${color} align-top">${formatCurrency(item.amount)}</td>
-                    <td class="px-3 py-3 text-center text-sm font-medium align-top">
-                        <button onclick="editItem('${item.id}')" class="text-indigo-600 hover:text-indigo-900 mr-2 ${isPreviewMode ? 'opacity-50 pointer-events-none' : ''}">✎</button>
-                        <button onclick="deleteItem('${item.id}')" class="text-red-600 hover:text-red-900 ${isPreviewMode ? 'opacity-50 pointer-events-none' : ''}">✖</button>
-                    </td>
+                    <td class="px-4 py-3 text-xs font-medium text-gray-900">${item}</td>
+                    <td class="px-4 py-3 text-right text-xs text-emerald-600 font-bold">${summary[item].in > 0 ? summary[item].in : '-'}</td>
+                    <td class="px-4 py-3 text-right text-xs text-red-600 font-bold">${summary[item].out > 0 ? summary[item].out : '-'}</td>
                 `;
                 tbody.appendChild(row);
             });
         };
 
-        const renderSummaryStats = (data) => {
-            let inc = 0, exp = 0;
-            const items = {};
-            const months = {};
-
+        const renderMonthlyAnalysis = (data) => {
+            const analysis = {};
             data.forEach(t => {
-                if(t.type === 'income') inc += t.amount;
-                else exp += t.amount;
-
-                // Item Stock
-                if(!items[t.itemType]) items[t.itemType] = {i:0, e:0};
-                if(t.type === 'income') items[t.itemType].i += t.quantity;
-                else items[t.itemType].e += t.quantity;
-
-                // Monthly Stats
-                const m = t.date.slice(0,7);
-                if(!months[m]) months[m] = {i:0, e:0};
-                if(t.type === 'income') months[m].i += t.amount;
-                else months[m].e += t.amount;
+                const m = t.date.substring(0, 7);
+                if (!analysis[m]) analysis[m] = { inc: 0, exp: 0 };
+                if (t.type === 'income') analysis[m].inc += t.amount;
+                else analysis[m].exp += t.amount;
             });
-
-            els.summary.income.textContent = formatCurrency(inc);
-            els.summary.expense.textContent = formatCurrency(exp);
-            const net = inc - exp;
-            els.summary.balance.textContent = formatCurrency(net);
-            els.summary.balance.className = `text-2xl font-bold mt-1 ${net >= 0 ? 'text-blue-600' : 'text-red-600'}`;
-
-            // Items Table
-            els.summary.itemBody.innerHTML = '';
-            Object.keys(items).sort().forEach(k => {
-                if(items[k].i > 0 || items[k].e > 0) {
-                    els.summary.itemBody.innerHTML += `
-                        <tr>
-                            <td class="px-4 py-2 text-sm font-medium text-gray-900">${k}</td>
-                            <td class="px-4 py-2 text-right text-sm text-emerald-700 font-bold">${items[k].i}</td>
-                            <td class="px-4 py-2 text-right text-sm text-red-700 font-bold">${items[k].e}</td>
-                        </tr>
-                    `;
+            let maxInc = { val: 0, m: 'N/A' }, minInc = { val: Infinity, m: 'N/A' };
+            let maxExp = { val: 0, m: 'N/A' }, minExp = { val: Infinity, m: 'N/A' };
+            Object.keys(analysis).forEach(m => {
+                const a = analysis[m];
+                if(a.inc > 0) {
+                    if (a.inc > maxInc.val) { maxInc.val = a.inc; maxInc.m = m; }
+                    if (a.inc < minInc.val) { minInc.val = a.inc; minInc.m = m; }
+                }
+                if(a.exp > 0) {
+                    if (a.exp > maxExp.val) { maxExp.val = a.exp; maxExp.m = m; }
+                    if (a.exp < minExp.val) { minExp.val = a.exp; minExp.m = m; }
                 }
             });
-            if(!els.summary.itemBody.innerHTML) els.summary.itemBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">માહિતી નથી</td></tr>';
-
-            // Monthly Analysis (Simple Max/Min calculation)
-            let maxI = -1, minI = Infinity, maxE = -1, minE = Infinity;
-            let maxIM = 'N/A', minIM = 'N/A', maxEM = 'N/A', minEM = 'N/A';
-
-            Object.keys(months).forEach(m => {
-                if(months[m].i > maxI) { maxI = months[m].i; maxIM = m; }
-                if(months[m].i < minI && months[m].i > 0) { minI = months[m].i; minIM = m; }
-                if(months[m].e > maxE) { maxE = months[m].e; maxEM = m; }
-                if(months[m].e < minE && months[m].e > 0) { minE = months[m].e; minEM = m; }
-            });
-
-            const fmtM = (ym) => {
-                if(ym === 'N/A') return ym;
-                const [y, m] = ym.split('-');
+            const formatM = (ys) => {
+                if (ys === 'N/A') return 'N/A';
+                const [y, m] = ys.split('-');
                 return `${GUJARATI_MONTHS[parseInt(m)-1]} ${y}`;
             };
+            if(minInc.val === Infinity) minInc.val = 0;
+            if(minExp.val === Infinity) minExp.val = 0;
 
-            els.summary.monthly.maxIncM.textContent = fmtM(maxIM); els.summary.monthly.maxIncA.textContent = formatCurrency(maxI > -1 ? maxI : 0);
-            els.summary.monthly.minIncM.textContent = fmtM(minIM); els.summary.monthly.minIncA.textContent = formatCurrency(minI !== Infinity ? minI : 0);
-            els.summary.monthly.maxExpM.textContent = fmtM(maxEM); els.summary.monthly.maxExpA.textContent = formatCurrency(maxE > -1 ? maxE : 0);
-            els.summary.monthly.minExpM.textContent = fmtM(minEM); els.summary.monthly.minExpA.textContent = formatCurrency(minE !== Infinity ? minE : 0);
+            els.summary.monthly.maxIncM.innerText = formatM(maxInc.m);
+            els.summary.monthly.maxIncA.innerText = formatCurrency(maxInc.val);
+            els.summary.monthly.minIncM.innerText = formatM(minInc.m);
+            els.summary.monthly.minIncA.innerText = formatCurrency(minInc.val);
+            els.summary.monthly.maxExpM.innerText = formatM(maxExp.m);
+            els.summary.monthly.maxExpA.innerText = formatCurrency(maxExp.val);
+            els.summary.monthly.minExpM.innerText = formatM(minExp.m);
+            els.summary.monthly.minExpA.innerText = formatCurrency(minExp.val);
         };
 
         // --- CRUD Operations ---
-        const handleForm = (e) => {
+        els.form.addEventListener('submit', (e) => {
             e.preventDefault();
-            if(isPreviewMode) return;
-
-            const raw = {
+            if (isPreviewMode) return;
+            const transaction = {
+                id: editingTransactionId || generateId(),
                 date: els.inputs.date.value,
                 itemType: els.inputs.itemType.value,
-                quantity: parseInt(els.inputs.quantity.value),
+                quantity: parseFloat(els.inputs.quantity.value),
                 rate: parseFloat(els.inputs.rate.value),
                 amount: parseFloat(els.inputs.amountHidden.value),
-                type: els.inputs.type.value,
-                sourceDestination: els.inputs.sourceDest.value
+                sourceDest: els.inputs.sourceDest.value,
+                type: els.inputs.type.value
             };
-
-            if(!raw.date || !raw.itemType || isNaN(raw.quantity) || isNaN(raw.rate)) {
-                return showStatus("બધી વિગત ભરો.", 'error');
-            }
-
-            if(editingTransactionId) {
-                const idx = allTransactionsData.findIndex(t => t.id === editingTransactionId);
-                if(idx > -1) {
-                    allTransactionsData[idx] = { ...raw, id: editingTransactionId };
-                    showStatus("અપડેટ થઈ ગયું!");
-                }
+            if (editingTransactionId) {
+                const index = allTransactionsData.findIndex(t => t.id === editingTransactionId);
+                if (index !== -1) allTransactionsData[index] = transaction;
+                showStatus("વ્યવહાર સુધારાઈ ગયો!");
+                editingTransactionId = null;
+                els.buttons.submit.textContent = "ઉમેરો";
+                els.buttons.submit.classList.replace('bg-blue-600', 'bg-emerald-600');
+                els.buttons.submit.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+                els.buttons.cancel.classList.add('hidden');
+                document.getElementById('form-title').innerText = "નવો વ્યવહાર (Add Transaction)";
             } else {
-                allTransactionsData.push({ ...raw, id: generateId() });
-                showStatus("ઉમેરાઈ ગયું!");
+                allTransactionsData.push(transaction);
+                showStatus("વ્યવહાર ઉમેરાઈ ગયો!");
             }
-
-            allTransactionsData.sort((a,b) => new Date(b.date) - new Date(a.date));
             saveData();
-            resetForm();
             renderAll();
-        };
+            els.form.reset();
+            document.getElementById('total-amount-display').value = "₹ 0";
+            document.getElementById('date').valueAsDate = new Date();
+        });
 
-        const editItem = (id) => {
-            if(isPreviewMode) return;
+        window.editTransaction = (id) => {
+            switchMode('single');
             const t = allTransactionsData.find(x => x.id === id);
-            if(!t) return;
-            editingTransactionId = id;
+            if (!t) return;
             els.inputs.date.value = t.date;
             els.inputs.itemType.value = t.itemType;
             els.inputs.quantity.value = t.quantity;
             els.inputs.rate.value = t.rate;
+            els.inputs.sourceDest.value = t.sourceDest;
             els.inputs.type.value = t.type;
-            toggleSourceDest();
-            els.inputs.sourceDest.value = t.sourceDestination || '';
             calculateTotal();
-            
-            els.buttons.submit.textContent = "અપડેટ કરો";
+            toggleSourceDest();
+            editingTransactionId = id;
+            els.buttons.submit.textContent = "સુધારો (Update)";
             els.buttons.submit.classList.replace('bg-emerald-600', 'bg-blue-600');
+            els.buttons.submit.classList.replace('hover:bg-emerald-700', 'hover:bg-blue-700');
             els.buttons.cancel.classList.remove('hidden');
-            document.getElementById('form-title').textContent = "એડિટ કરો";
-            els.form.scrollIntoView({behavior:'smooth'});
+            document.getElementById('form-title').innerText = "વ્યવહાર સુધારો (Edit Transaction)";
+            els.form.scrollIntoView({ behavior: 'smooth' });
         };
 
-        const deleteItem = (id) => {
-            if(isPreviewMode) return;
-            if(confirm("ડિલીટ કરવું છે?")) {
-                allTransactionsData = allTransactionsData.filter(x => x.id !== id);
+        window.deleteTransaction = (id) => {
+            if (confirm("શું તમે આ વ્યવહાર ડિલીટ કરવા માંગો છો?")) {
+                allTransactionsData = allTransactionsData.filter(t => t.id !== id);
                 saveData();
                 renderAll();
-                showStatus("ડિલીટ થઈ ગયું.");
+                showStatus("વ્યવહાર ડિલીટ કર્યો.", 'error');
+            }
+        };
+        
+        // NEW: Function to delete entire bill
+        window.deleteBill = (billId) => {
+             if (confirm("આખું બિલ (બધી વસ્તુઓ) ડિલીટ થશે. આગળ વધવું છે?")) {
+                allTransactionsData = allTransactionsData.filter(t => t.billId !== billId);
+                saveData();
+                renderAll();
+                showStatus("આખું બિલ ડિલીટ કર્યું.", 'error');
             }
         };
 
-        const resetForm = () => {
-            els.form.reset();
-            els.inputs.date.value = new Date().toISOString().split('T')[0];
-            editingTransactionId = null;
-            els.buttons.submit.textContent = "ઉમેરો";
-            els.buttons.submit.classList.replace('bg-blue-600', 'bg-emerald-600');
-            els.buttons.cancel.classList.add('hidden');
-            document.getElementById('form-title').textContent = "નવો વ્યવહાર";
-            calculateTotal();
-            toggleSourceDest();
+        // NEW: View Bill Detail Logic
+        window.viewBill = (billId) => {
+            const billItems = allTransactionsData.filter(t => t.billId === billId);
+            if(billItems.length === 0) return;
+
+            const tbody = document.getElementById('bill-modal-body');
+            tbody.innerHTML = '';
+            let grandTotal = 0;
+
+            // Get first item for metadata
+            const first = billItems[0];
+            const d = new Date(first.date);
+            const dateStr = `${d.getDate().toString().padStart(2,'0')}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getFullYear()}`;
+            
+            document.getElementById('bill-modal-title').innerText = `બિલ: ${first.sourceDest}`;
+            document.getElementById('bill-modal-subtitle').innerText = `તારીખ: ${dateStr} | પ્રકાર: ${first.type === 'income' ? 'આવક' : 'ખર્ચ'}`;
+
+            billItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition";
+                tr.innerHTML = `
+                    <td class="px-4 py-2 text-sm font-medium text-gray-900">${item.itemType}</td>
+                    <td class="px-4 py-2 text-sm text-right text-gray-600">${item.quantity}</td>
+                    <td class="px-4 py-2 text-sm text-right text-gray-600">${item.rate}</td>
+                    <td class="px-4 py-2 text-sm text-right font-bold text-emerald-600">${formatCurrency(item.amount)}</td>
+                `;
+                tbody.appendChild(tr);
+                grandTotal += item.amount;
+            });
+
+            document.getElementById('bill-modal-total').innerText = formatCurrency(grandTotal);
+            document.getElementById('bill-modal').classList.remove('hidden');
         };
 
-        // --- Init ---
+        window.closeBillModal = () => {
+            document.getElementById('bill-modal').classList.add('hidden');
+        };
+
+        // === NEW: Daily Report Functions ===
+        window.openDailyReport = () => {
+            document.getElementById('daily-report-modal').classList.remove('hidden');
+            // Default to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('report-date').value = today;
+            renderDailyReport();
+        };
+
+        window.closeDailyReport = () => {
+            document.getElementById('daily-report-modal').classList.add('hidden');
+        };
+
+        window.renderDailyReport = () => {
+            const date = document.getElementById('report-date').value;
+            if(!date) return;
+
+            const tbody = document.getElementById('daily-report-body');
+            const totalQtyEl = document.getElementById('daily-report-total-qty');
+            const totalAmountEl = document.getElementById('daily-report-total-amount'); // New element
+            
+            tbody.innerHTML = '';
+            
+            // Filter: Selected Date AND Income Type
+            const data = allTransactionsData.filter(t => t.date === date && t.type === 'income');
+
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="2" class="px-4 py-3 text-center text-gray-500">કોઈ વેચાણ ડેટા મળ્યો નથી.</td></tr>';
+                totalQtyEl.innerText = '0';
+                totalAmountEl.innerText = formatCurrency(0);
+                return;
+            }
+
+            // Aggregate Data by Item Type
+            const summary = {};
+            let grandTotalQty = 0;
+            let grandTotalAmount = 0;
+
+            data.forEach(t => {
+                if(!summary[t.itemType]) summary[t.itemType] = 0;
+                summary[t.itemType] += t.quantity;
+                grandTotalQty += t.quantity;
+                grandTotalAmount += t.amount;
+            });
+
+            // Render Table
+            Object.keys(summary).forEach(itemType => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">${itemType}</td>
+                    <td class="px-4 py-3 text-right text-sm font-bold text-emerald-600">${summary[itemType]}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            totalQtyEl.innerText = grandTotalQty;
+            totalAmountEl.innerText = formatCurrency(grandTotalAmount);
+        };
+
+        els.buttons.cancel.addEventListener('click', () => {
+            editingTransactionId = null;
+            els.form.reset();
+            calculateTotal();
+            els.buttons.submit.textContent = "ઉમેરો";
+            els.buttons.submit.classList.replace('bg-blue-600', 'bg-emerald-600');
+            els.buttons.submit.classList.replace('hover:bg-blue-700', 'hover:bg-emerald-700');
+            els.buttons.cancel.classList.add('hidden');
+            document.getElementById('form-title').innerText = "નવો વ્યવહાર (Add Transaction)";
+            document.getElementById('date').valueAsDate = new Date();
+        });
+
+        // --- Event Listeners ---
         els.inputs.quantity.addEventListener('input', calculateTotal);
         els.inputs.rate.addEventListener('input', calculateTotal);
         els.inputs.type.addEventListener('change', toggleSourceDest);
-        els.form.addEventListener('submit', handleForm);
-        els.buttons.cancel.addEventListener('click', resetForm);
-        
-        els.filter.type.addEventListener('change', updateFilterInputs);
         els.inputs.search.addEventListener('input', renderAll);
+        els.filter.type.addEventListener('change', updateFilterInputs);
+        els.bulk.type.addEventListener('change', () => {
+            const label = document.getElementById('bulk-source-label');
+            if(els.bulk.type.value === 'expense') {
+                label.textContent = "કોને ચૂકવ્યા";
+                els.bulk.source.placeholder = "કોને ચૂકવ્યા?";
+            } else {
+                label.textContent = "કોને આપ્યું";
+                els.bulk.source.placeholder = "કોને આપ્યું?";
+            }
+        });
 
-        // Check if backup exists on load (optional but good UX)
-        if(localStorage.getItem(BACKUP_KEY)) {
-             els.buttons.undo.classList.remove('hidden');
-        }
-
-        // Start
-        loadData();
-        resetForm();
+        document.getElementById('date').valueAsDate = new Date();
         updateFilterInputs();
-
+        loadData();
     </script>
 </body>
 </html>
